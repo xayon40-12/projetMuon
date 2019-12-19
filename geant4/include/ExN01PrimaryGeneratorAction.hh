@@ -38,7 +38,20 @@
 #include "G4ParticleGun.hh"
 
 class G4Event;
+
+class Gun {
+private:
+  G4ParticleGun gun;
+  TFile run;
+  TH1D *distE;
+  TH1D *distTheta;
   
+public:
+  Gun(G4int nParticle, G4String particleName, G4String rootFile, G4String Ename, G4String thetaName);
+  ~Gun();
+  
+  void generate(G4Event* anEvent, G4double areaLength, G4double unit);
+};
 
 class ExN01PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {

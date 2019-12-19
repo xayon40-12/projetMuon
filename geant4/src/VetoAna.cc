@@ -27,16 +27,8 @@
 #include "RootFile_evt.hh"
 extern RootFile_evt *test;
 
-VetoAna::VetoAna()
-{
- event=-1;
- trackerCollID = -1;
- 
-}
-VetoAna::~VetoAna()
-{
-  
-}
+VetoAna::VetoAna(): event(0), trackerCollID(0) {}
+VetoAna::~VetoAna() {}
 
 void VetoAna::BeginOfRunAction(const G4Run *aRun)
 {
@@ -52,16 +44,10 @@ void VetoAna::BeginOfEventAction(const G4Event* evt)
 {
   G4cout << ">>> Begin Event number " << evt->GetEventID() << G4endl;
 
-  event=evt->GetEventID();
-  test->SetEvent(event);
-
-  if(trackerCollID)
-  {
+    event=evt->GetEventID();
+    test->SetEvent(event);
     G4SDManager * SDman = G4SDManager::GetSDMpointer();
-    trackerCollID = SDman->GetCollectionID("trackerCollection");
-  }
-  //initialisation
-
+    trackerCollID = SDman->GetCollectionID("TrackerHitsCollection");
 }
 
 void VetoAna::EndOfEventAction(const G4Event* evt)
@@ -109,42 +95,8 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
   
   //Filling tree
   //  test->GetFileRoot()->cd();
-  
-  //inventory
-/*   test->SetgScint(gScint);test->SetnScint(nScint);
-  test->SeteScint(eScint);test->SetmuScint(muScint);
-  test->SetotherScint(otherScint); test->SetopScint(opScint);
 
-  test->SetgPb(gPb);test->SetnPb(nPb);
-  test->SetePb(ePb);test->SetmuPb(muPb);
-  test->SetotherPb(otherPb); 
-
-
-  test->Setgpmt(gpmt);test->SetnScint(npmt);
-  test->Setepmt(epmt);test->Setmupmt(mupmt);
-  test->Setotherpmt(otherpmt); test->Setoppmt(oppmt);
-
-  //Dep. Energy by part.
-  test->SetEdep_gScint(Edep_gScint);test->SetEdep_nScint(Edep_nScint);
-  test->SetEdep_eScint(Edep_eScint);test->SetEdep_muScint(Edep_muScint);
-  test->SetEdep_otherScint(Edep_otherScint);  test->SetEdep_opScint(Edep_opScint);
-  test->SetEdep_gPb(Edep_gPb);test->SetEdep_nPb(Edep_nPb);
-  test->SetEdep_ePb(Edep_ePb);test->SetEdep_muPb(Edep_muPb);
-  test->SetEdep_otherPb(Edep_otherPb);test->SetEdep_opPb(Edep_opPb);
-
-  test->SetEdep_gpmt(Edep_gpmt);test->SetEdep_npmt(Edep_npmt);
-  test->SetEdep_epmt(Edep_epmt);test->SetEdep_mupmt(Edep_mupmt);
-  test->SetEdep_otherpmt(Edep_otherpmt);test->SetEdep_oppmt(Edep_oppmt);
-
-*/
-
-  //Total Dep. Energy
-  //test->SettotESc(totESc);
-  if(Etot > 0) //TODO remove if counting particle that does not deposit Energy is needed
-  test->SettotEPb(Etot);
-  //test->SettotEpmt(totEpmt);
-  //Vertex in Scint
-  //filled during the main
+  if(Etot > 0) test->SettotEPb(Etot);
   test->FillTree();
 }
 void VetoAna::UserSteppingAction(const G4Step* aStep)
@@ -157,21 +109,4 @@ void VetoAna::UserSteppingAction(const G4Step* aStep)
   auto partName = track->GetDefinition()->GetParticleName();
   //auto vtx = track->GetVertexPosition();
   names[ID] = partName;
-  
-  /*
-  if(partName.substr(0,2) == "nu" || partName.substr(0,7) == "anti_nu"){
-    G4cout << partName << "   ID: " << ID << "   Edep: " << Edep << "   totalEnergy: " << Etot << G4endl;
-  }
-  */
-    
-  
-  /*G4cout
-    << "    " << partName
-    << "   \tID: " << track->GetTrackID()
-    << " \tvertex pos: " << std::setw(7) << G4BestUnit( vtx,"Length")
-    << " \tvolume traversed: " << volName
-    << " \tEdep: " << std::setw(7) << G4BestUnit(Edep,"Energy")
-    << G4endl;*/
-
-  //Etot = Etot + Edep;
 }

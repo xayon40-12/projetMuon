@@ -41,6 +41,7 @@ class B2TrackerHit : public G4VHit
     void SetEdep            (G4double de)       { fEdep = de; };
     void SetPos             (G4ThreeVector xyz) { fPos = xyz; };
     void SetPartName        (G4String pName)    { partName = pName; };
+    void SetGlobalTime      (G4double time)     { globTime = time; };
 
     // Get methods
     G4int GetTrackID() const            { return fTrackID; };
@@ -52,6 +53,7 @@ class B2TrackerHit : public G4VHit
     G4double GetEdep() const            { return fEdep; };
     G4ThreeVector GetPos() const        { return fPos; };
     G4String GetPartName() const        { return partName; };
+    G4double GetGlobalTime() const      { return globTime; };
 
   private:
 
@@ -64,6 +66,7 @@ class B2TrackerHit : public G4VHit
       G4double      fEdep;
       G4ThreeVector fPos;
       G4String      partName;
+      G4double      globTime;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

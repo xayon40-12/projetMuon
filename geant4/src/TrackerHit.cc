@@ -42,6 +42,7 @@ B2TrackerHit::B2TrackerHit(const B2TrackerHit& right)
   fEdep      = right.fEdep;
   fPos       = right.fPos;
   partName   = right.partName;
+  globTime   = right.globTime;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -57,6 +58,7 @@ const B2TrackerHit& B2TrackerHit::operator=(const B2TrackerHit& right)
   fEdep      = right.fEdep;
   fPos       = right.fPos;
   partName   = right.partName;
+  globTime   = right.globTime;
 
   return *this;
 }
@@ -99,6 +101,7 @@ void B2TrackerHit::Print()
      << "   \tEdep: " << std::setw(7) << G4BestUnit(fEdep,"Energy")
      << "   \ttotal energy: " << std::setw(7) << G4BestUnit(fTotalEnergy,"Energy")
      << "   \tPosition: " << std::setw(7) << G4BestUnit( fPos,"Length")
+     << "   \ttime: " << std::setw(7) << G4BestUnit( globTime,"Time")
      << G4endl;
 }
 

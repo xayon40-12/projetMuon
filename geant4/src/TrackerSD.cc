@@ -56,6 +56,7 @@ G4bool B2TrackerSD::ProcessHits(G4Step* aStep,
   newHit->SetEdep(edep);
   newHit->SetPos(aStep->GetPostStepPoint()->GetPosition());
   newHit->SetPartName(aStep->GetTrack()->GetDefinition()->GetParticleName());
+  newHit->SetGlobalTime(aStep->GetTrack()->GetGlobalTime());
 
   fHitsCollection->insert( newHit );
 
