@@ -1,0 +1,42 @@
+#
+# Macro file for the initialization phase of "exampleN02.cc"
+# when runing in interactive mode
+#
+# Sets some default verbose
+#
+
+/control/verbose 0
+/run/verbose 0
+
+#
+# Create a scene handler for a specific graphics system
+# (Edit the next line(s) to choose another graphics system)
+##
+# create empty scene
+#
+#/vis/scene/create
+/run/initialize
+/vis/open OGL 600x600-0+0
+#
+#/vis/open DAWNFILE
+#
+# draw scene
+#
+/vis/drawVolume
+#
+/vis/viewer/set/viewpointThetaPhi 240 30 deg
+/vis/viewer/zoom 1
+/vis/viewer/flush
+#
+# for drawing the tracks
+/tracking/storeTrajectory 1
+/vis/scene/add/trajectories
+# (if too many tracks cause core dump => /tracking/storeTrajectory 0)
+# for drawing the hits, uncomment next line
+# /vis/scene/add/hits
+# (if you prefer refreshing each event, comment out next line)
+/vis/scene/endOfEventAction accumulate
+#
+/tracking/verbose 1
+/run/beamOn 1
+/vis/viewer/rebuild
