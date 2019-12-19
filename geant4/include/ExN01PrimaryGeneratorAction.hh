@@ -63,7 +63,7 @@ class ExN01PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
     void GeneratePrimaries(G4Event* anEvent);
 
   private:
-    G4ParticleGun gun;
+    Gun muGun;
 };
 
 #endif
