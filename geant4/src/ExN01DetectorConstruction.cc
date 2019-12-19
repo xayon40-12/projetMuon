@@ -59,29 +59,51 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
 {
 
   //------------------------------------------------------ materials
-
+  // Elements
   G4double a;  // atomic mass
   G4double z;  // atomic number
   G4double density;
   G4int nel;
 
-  G4Material* Pb = new G4Material("Lead", z= 82., a= 207.19*g/mole, density= 11.35*g/cm3);
-  
-  //Air
+  G4Element* H = new G4Element("Hydrogen"  , "H", z=1., a= 1.00*g/mole);
+  G4Element* C = new G4Element("Carbon"  , "C", z=6., a= 12.01*g/mole);
   G4Element* N = new G4Element("Nitrogen", "N", z=7., a= 14.01*g/mole);
   G4Element* O = new G4Element("Oxygen"  , "O", z=8., a= 16.00*g/mole);
-   
+  G4Element* Na = new G4Element("Sodium"  , "Na", z=11., a= 22.99*g/mole);
+  G4Element* Mg = new G4Element("Magnesium"  , "Mg", z=12., a= 24.31*g/mole);
+  G4Element* Al = new G4Element("Aluminium"  , "Al", z=13., a= 26.98*g/mole);
+  G4Element* K = new G4Element("Potasium"  , "K", z=19., a= 39.10*g/mole);
+  G4Element* Ca = new G4Element("Calcium"  , "Ca", z=20., a= 40.08*g/mole);
+  G4Element* Mn = new G4Element("Manganese"  , "Mn", z=25., a= 54.94*g/mole);
+  G4Element* Fe = new G4Element("Iron"  , "Fe", z=26., a= 55.85*g/mole);
+
+  // Aluminium
+  G4Material* Al = new G4Material("Aluminium", density= 2.7*g/cm3,nel=1);
+  Al->AddElement(Al, 100*perCent);
+
+  //Air
   G4Material* Air = new G4Material("Air", density= 0.00001*mg/cm3, nel=2);
   Air->AddElement(N, 70*perCent);
   Air->AddElement(O, 30*perCent);
   
-  G4Element* C = new G4Element("Carbon", "C", z=6., a= 12.01*g/mole);
-  G4Element* H = new G4Element("Hydrogen", "H", z=1., a= 1.00*g/mole);
-  
+  // Scintillateur
   G4Material* Scintillator = new G4Material("Scintillator", density= 0.8*g/cm3, nel=2);
   Scintillator->AddElement(C, 47*perCent);
   Scintillator->AddElement(H, 53*perCent);
   
+  G4Material* Wood = new G4Material("Wood", density= 0.51*g/cm3, nel=10);
+  Wood->AddElement(C, 50*perCent);
+  Wood->AddElement(O, 42*perCent);
+  Wood->AddElement(H, 6*perCent);
+  Wood->AddElement(N, 1*perCent);
+  Wood->AddElement(Ca, 0.2*perCent);
+  Wood->AddElement(K, 0.2*perCent);
+  Wood->AddElement(Na, 0.2*perCent);
+  Wood->AddElement(Mg, 0.2*perCent);
+  Wood->AddElement(Mn, 0.1*perCent);
+  Wood->AddElement(Fe, 0.1*perCent);
+
+
   G4NistManager* man = G4NistManager::Instance();
   G4Material* csiMaterial = man->FindOrBuildMaterial("G4_CESIUM_IODIDE");
 
