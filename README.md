@@ -1,2 +1,2 @@
 # projetMuon
-detection du temps de vie des muon
+detection du temps de vie des muon. 
