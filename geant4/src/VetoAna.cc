@@ -47,7 +47,7 @@ void VetoAna::BeginOfEventAction(const G4Event* evt)
     event=evt->GetEventID();
     test->SetEvent(event);
     G4SDManager * SDman = G4SDManager::GetSDMpointer();
-    trackerCollID = SDman->GetCollectionID("TrackerHitsCollection");
+    trackerCollID = SDman->GetCollectionID("TrackerHitsCollection1");
 }
 
 void VetoAna::EndOfEventAction(const G4Event* evt)

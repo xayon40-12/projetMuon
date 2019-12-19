@@ -144,7 +144,7 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
 
   G4String Scintillator1SDname = "SD1";
   B2TrackerSD* Scintillator1SD = new B2TrackerSD(Scintillator1SDname,
-                                            "TrackerHitsCollection");
+                                            "TrackerHitsCollection1");
   G4SDManager::GetSDMpointer()->AddNewDetector(Scintillator1SD);
   SetSensitiveDetector("scintillator1_log", Scintillator1SD, true);
 
@@ -168,7 +168,7 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
 
   G4String Scintillator2SDname = "SD2";
   B2TrackerSD* Scintillator2SD = new B2TrackerSD(Scintillator2SDname ,
-                                            "TrackerHitsCollection");
+                                            "TrackerHitsCollection2");
   G4SDManager::GetSDMpointer()->AddNewDetector(Scintillator2SD);
   SetSensitiveDetector("scintillator2_log", Scintillator2SD, true);
 
@@ -192,7 +192,7 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
 
   G4String Scintillator3SDname = "SD3";
   B2TrackerSD* Scintillator3SD = new B2TrackerSD(Scintillator3SDname ,
-                                            "TrackerHitsCollection");
+                                            "TrackerHitsCollection3");
   G4SDManager::GetSDMpointer()->AddNewDetector(Scintillator3SD);
   SetSensitiveDetector("scintillator3_log", Scintillator3SD, true);
  
