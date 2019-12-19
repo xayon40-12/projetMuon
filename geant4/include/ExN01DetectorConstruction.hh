@@ -6,7 +6,7 @@
 // * the Geant4 Collaboration.  It is provided  under  the terms  and *
 // * conditions of the Geant4 Software License,  included in the file *
 // * LICENSE and available at  http://cern.ch/geant4/license .  These *
-// * include a list of copyright holders.                             *
+// * include a list of copyright holders.A                             *
 // *                                                                  *
 // * Neither the authors of this software system, nor their employing *
 // * institutes,nor the agencies providing financial support for this *
@@ -35,7 +35,6 @@ class G4LogicalVolume;
 class G4VPhysicalVolume;
 
 #include "G4VUserDetectorConstruction.hh"
-#include "TrackerSD.hh"
 
 class ExN01DetectorConstruction : public G4VUserDetectorConstruction
 {
@@ -45,25 +44,24 @@ class ExN01DetectorConstruction : public G4VUserDetectorConstruction
     ~ExN01DetectorConstruction();
 
     G4VPhysicalVolume* Construct();
-    
-    void ConstructSDandField();
 
   private:
     
     // Logical volumes
     //
     G4LogicalVolume* experimentalHall_log;
-    G4LogicalVolume* target_log;
-    G4LogicalVolume* detector_log;
-    G4LogicalVolume* shielding_log;
-
+    G4LogicalVolume* scintillator1_log;
+    G4LogicalVolume* scintillator2_log;
+    G4LogicalVolume* scintillator3_log;
+  
     // Physical volumes
     //
     G4VPhysicalVolume* experimentalHall_phys;
-    G4VPhysicalVolume* target_phys;
-    G4VPhysicalVolume* detector_phys;
-    G4VPhysicalVolume* shielding_phys;
-    G4VPhysicalVolume* detector2_phys;
+    G4VPhysicalVolume* scintillator1_phys;
+    G4VPhysicalVolume* scintillator2_phys;
+    G4VPhysicalVolume* scintillator3_phys;
+    
+  
 };
 
 #endif

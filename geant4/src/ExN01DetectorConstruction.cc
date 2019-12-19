@@ -40,13 +40,15 @@
 #include "G4SystemOfUnits.hh"
 #include "G4VisAttributes.hh"
 #include "G4Colour.hh"
+#include "B2TrackerSD.hh"
+#include "B2TrackerHit.hh"
 #include "G4SDManager.hh"
-#include "G4NistManager.hh"
 //#include "G4ENSDFSTATEDATA.hh"
+#include "G4NistManager.hh"
 
 ExN01DetectorConstruction::ExN01DetectorConstruction()
- :  experimentalHall_log(0), target_log(0), detector_log(0),
-    experimentalHall_phys(0), target_phys(0), detector_phys(0), detector2_phys(0)
+ :  experimentalHall_log(0), scintillator1_log(0), scintillator2_log(0),scintillator3_log(0),
+    experimentalHall_phys(0), scintillator1_phys(0),scintillator2_phys(0),scintillator3_phys(0)
 {;}
 
 ExN01DetectorConstruction::~ExN01DetectorConstruction()
@@ -62,70 +64,147 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
   G4double z;  // atomic number
   G4double density;
   G4int nel;
-  G4NistManager* man = G4NistManager::Instance();
 
-
+  G4Material* Pb = new G4Material("Lead", z= 82., a= 207.19*g/mole, density= 11.35*g/cm3);
+  
   //Air
   G4Element* N = new G4Element("Nitrogen", "N", z=7., a= 14.01*g/mole);
   G4Element* O = new G4Element("Oxygen"  , "O", z=8., a= 16.00*g/mole);
    
-  G4Material* Air = new G4Material("Air", density= 1.29*mg/cm3, nel=2);
+  G4Material* Air = new G4Material("Air", density= 0.00001*mg/cm3, nel=2);
   Air->AddElement(N, 70*perCent);
   Air->AddElement(O, 30*perCent);
   
-  //csi
-  G4Material* csi = man->FindOrBuildMaterial("G4_CESIUM_IODIDE");
+  G4Element* C = new G4Element("Carbon", "C", z=6., a= 12.01*g/mole);
+  G4Element* H = new G4Element("Hydrogen", "H", z=1., a= 1.00*g/mole);
   
-  G4Element* Pb = new G4Element("Lead"  , "Pb", z=82., a= 207.20*g/mole);
-  G4Material* pb = new G4Material("Lead", density= 11.35*g/cm3, nel=1);
-  pb->AddElement(Pb, 100*perCent);
+  G4Material* Scintillator = new G4Material("Scintillator", density= 0.8*g/cm3, nel=2);
+  Scintillator->AddElement(C, 47*perCent);
+  Scintillator->AddElement(H, 53*perCent);
   
+  G4NistManager* man = G4NistManager::Instance();
+  G4Material* csiMaterial = man->FindOrBuildMaterial("G4_CESIUM_IODIDE");
 
   //------------------------------------------------------ volumes
 
   //------------------------------ experimental hall (world volume)
   //------------------------------ beam line along x axis
 
-  G4Box* experimentalHall_box = new G4Box("expHall_box",10.0*cm,10.0*cm,20.0*cm);
-  experimentalHall_log = new G4LogicalVolume(experimentalHall_box, Air, "expHall_log", 0,0,0);
-  experimentalHall_phys = new G4PVPlacement(0, G4ThreeVector(), experimentalHall_log, "expHall", 0, false, 0);
+  G4double expHall_x = 5*m;
+  G4double expHall_y = 5*m;
+  G4double expHall_z = 5*m;
+  G4Box* experimentalHall_box
+    = new G4Box("expHall_box",expHall_x,expHall_y,expHall_z);
+  experimentalHall_log = new G4LogicalVolume(experimentalHall_box,
+                                             Air,"expHall_log",0,0,0);
+  experimentalHall_phys = new G4PVPlacement(0,G4ThreeVector(),
+                                      experimentalHall_log,"expHall",0,false,0);
 
-
+  //------------------------------ Lead shielding
+  //  G4double innerRadiusOfTheTubeshield = 3/2.*mm;
+  //  G4double outerRadiusOfTheTubeshield = 24/2.*mm;
+  //  G4double hightOfTheTubeshield = 105/2.*mm;
+  //  G4double startAngleOfTheTubeshield = 0.*deg;
+  //  G4double spanningAngleOfTheTubeshield = 360.*deg;
+  //  G4Tubs* Pbshield
+  //    = new G4Tubs("Pbshield",
+  //  		 innerRadiusOfTheTubeshield,
+  //  		 outerRadiusOfTheTubeshield,
+  //  		 hightOfTheTubeshield,
+  //  		 startAngleOfTheTubeshield,
+  //  		 spanningAngleOfTheTubeshield);
+  
+  //  Pbshield_log = new G4LogicalVolume(Pbshield,
+  //  				    Pb,"Pbshield_log",0,0,0);
+  
+  //  G4double shieldPos_x = 0.0*mm;
+  //  G4double shieldPos_y = 0.0*mm;
+  //  G4double shieldPos_z = -72.85*mm;
+  //  Pbshield_phys = new G4PVPlacement(0,
+  //  				   G4ThreeVector(shieldPos_x,shieldPos_y,shieldPos_z),
+  //  				   Pbshield_log,"BlindagePb",experimentalHall_log,false,0);
   //------------------------------ a target block
 
-  G4double tub_hz = (40.7/2)*mm;
-  G4Tubs* target_tub = new G4Tubs("target_tub",0.*mm,13.*mm, tub_hz,0.*deg,360.*deg);
-  target_log = new G4LogicalVolume(target_tub, csi, "target_log", 0,0,0);
-  target_phys = new G4PVPlacement(0, G4ThreeVector(0.,0.,tub_hz), target_log, "csi", experimentalHall_log, false, 0);
+   //Scintillateur1
+
+  G4double scintillator1_x = 0.5*m;
+  G4double scintillator1_y = 0.5*m;
+  G4double scintillator1_z = 0.5*m;
+  G4Box* scintillator1 = new G4Box("scintillator1",scintillator1_x,
+                                          scintillator1_y,scintillator1_z);
+  
+  scintillator1_log = new G4LogicalVolume(scintillator1,
+                                   Scintillator,"scintillator1_log",0,0,0);
+  G4double scintillator1pos_x = 0.0*m;
+  G4double scintillator1pos_y = 0.0*m;
+  G4double scintillator1pos_z = 0.0*m;
+  scintillator1_phys = new G4PVPlacement(0,
+	      G4ThreeVector(scintillator1pos_x,scintillator1pos_y,scintillator1pos_z),
+              scintillator1_log,"Scintillator_1",experimentalHall_log,false,0);
+
+  G4String Scintillator1SDname = "SD1";
+  B2TrackerSD* Scintillator1SD = new B2TrackerSD(Scintillator1SDname,
+                                            "TrackerHitsCollection");
+  G4SDManager::GetSDMpointer()->AddNewDetector(Scintillator1SD);
+  SetSensitiveDetector("scintillator1_log", Scintillator1SD, true);
+
+  //Scintillateur 2
+
+  G4double scintillator2_x = 0.5*m;
+  G4double scintillator2_y = 0.5*m;
+  G4double scintillator2_z = 0.5*m;
+  G4Box* scintillator2 = new G4Box("scintillator2",scintillator2_x,
+                                          scintillator2_y,scintillator2_z);
+  
+  scintillator2_log = new G4LogicalVolume(scintillator2,Scintillator,"scintillator2_log",0,0,0);
+
+  G4double scintillator2pos_x = 2.0*m;
+  G4double scintillator2pos_y = 0.0*m;
+  G4double scintillator2pos_z = 0.0*m;
+  
+  scintillator2_phys = new G4PVPlacement(0,
+	G4ThreeVector(scintillator2pos_x,scintillator2pos_y,scintillator2pos_z),
+              scintillator2_log,"Scintillator_2",experimentalHall_log,false,0); 
+
+  G4String Scintillator2SDname = "SD2";
+  B2TrackerSD* Scintillator2SD = new B2TrackerSD(Scintillator2SDname ,
+                                            "TrackerHitsCollection");
+  G4SDManager::GetSDMpointer()->AddNewDetector(Scintillator2SD);
+  SetSensitiveDetector("scintillator2_log", Scintillator2SD, true);
 
 
-  //------------------------------ a shielding block
+  //Scintillateur 3
 
-  tub_hz = (105/2)*mm;
-  G4Tubs* shielding_tub = new G4Tubs("shielding_tub",3.*mm,24.*mm, tub_hz,0.*deg,360.*deg);
-  shielding_log = new G4LogicalVolume(shielding_tub, pb, "shielding_log", 0,0,0);
-  shielding_phys = new G4PVPlacement(0, G4ThreeVector(0.,0.,-tub_hz), shielding_log, "pb", experimentalHall_log, false, 0);
+  G4double scintillator3_x = 0.5*m;
+  G4double scintillator3_y = 0.5*m;
+  G4double scintillator3_z = 0.5*m;
+  G4Box* scintillator3 = new G4Box("scintillator3",scintillator3_x,
+                                          scintillator3_y,scintillator3_z);
+  
+  scintillator3_log = new G4LogicalVolume(scintillator3,
+                                   Scintillator,"scintillator3_log",0,0,0);
+  G4double scintillator3pos_x = 4.0*m;
+  G4double scintillator3pos_y = 0.0*m;
+  G4double scintillator3pos_z = 0.0*m;
+  scintillator3_phys = new G4PVPlacement(0,
+	      G4ThreeVector(scintillator3pos_x,scintillator3pos_y,scintillator3pos_z),
+              scintillator3_log,"Scintillator_3",experimentalHall_log,false,0);
 
+  G4String Scintillator3SDname = "SD3";
+  B2TrackerSD* Scintillator3SD = new B2TrackerSD(Scintillator3SDname ,
+                                            "TrackerHitsCollection");
+  G4SDManager::GetSDMpointer()->AddNewDetector(Scintillator3SD);
+  SetSensitiveDetector("scintillator3_log", Scintillator3SD, true);
+ 
+  
 //--------- Visualization attributes -------------------------------
 
-  G4VisAttributes* targetVisAtt= new G4VisAttributes(G4Colour(0.0,1.0,1.0));
+  G4VisAttributes* targetVisAtt= new G4VisAttributes(G4Colour(1.0,1.0,1.0));
   experimentalHall_log->SetVisAttributes(targetVisAtt);  
-  target_log ->SetVisAttributes(targetVisAtt);
+  scintillator1_log ->SetVisAttributes(targetVisAtt);
+  scintillator2_log ->SetVisAttributes(targetVisAtt);
+  scintillator3_log ->SetVisAttributes(targetVisAtt);
 
   return experimentalHall_phys;
 }
 
-void ExN01DetectorConstruction::ConstructSDandField() {
-  
-  // Sensitive detectors
-
-  G4String trackerChamberSDname = "ExN01/TrackerChamberSD";
-  B2TrackerSD* aTrackerSD = new B2TrackerSD(trackerChamberSDname,
-                                            "trackerCollection");
-  G4SDManager::GetSDMpointer()->AddNewDetector(aTrackerSD);
-  // Setting aTrackerSD to all logical volumes with the same name 
-  // of "Chamber_LV".
-  
-  //SetSensitiveDetector("detector_log", aTrackerSD, true);
-  SetSensitiveDetector("target_log", aTrackerSD, true);
-}
