@@ -77,10 +77,6 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
   G4Element* Mn = new G4Element("Manganese"  , "Mn", z=25., a= 54.94*g/mole);
   G4Element* Fe = new G4Element("Iron"  , "Fe", z=26., a= 55.85*g/mole);
 
-  // Aluminium
-  G4Material* Al = new G4Material("Aluminium", density= 2.7*g/cm3,nel=1);
-  Al->AddElement(Al, 100*perCent);
-
   //Air
   G4Material* Air = new G4Material("Air", density= 0.00001*mg/cm3, nel=2);
   Air->AddElement(N, 70*perCent);
@@ -112,9 +108,9 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
   //------------------------------ experimental hall (world volume)
   //------------------------------ beam line along x axis
 
-  G4double expHall_x = 5*m;
-  G4double expHall_y = 5*m;
-  G4double expHall_z = 5*m;
+  G4double expHall_x = 50*cm;
+  G4double expHall_y = 50*cm;
+  G4double expHall_z = 50*cm;
   G4Box* experimentalHall_box
     = new G4Box("expHall_box",expHall_x,expHall_y,expHall_z);
   experimentalHall_log = new G4LogicalVolume(experimentalHall_box,
@@ -149,17 +145,17 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
 
    //Scintillateur1
 
-  G4double scintillator1_x = 0.5*m;
-  G4double scintillator1_y = 0.5*m;
-  G4double scintillator1_z = 0.5*m;
+  G4double scintillator1_x = 37.4*cm;
+  G4double scintillator1_y = 1.25*cm;
+  G4double scintillator1_z = 6.55*cm;
   G4Box* scintillator1 = new G4Box("scintillator1",scintillator1_x,
                                           scintillator1_y,scintillator1_z);
   
   scintillator1_log = new G4LogicalVolume(scintillator1,
                                    Scintillator,"scintillator1_log",0,0,0);
-  G4double scintillator1pos_x = 0.0*m;
-  G4double scintillator1pos_y = 0.0*m;
-  G4double scintillator1pos_z = 0.0*m;
+  G4double scintillator1pos_x = 0.0*cm;
+  G4double scintillator1pos_y = 7.0*cm;
+  G4double scintillator1pos_z = 0.0*cm;
   scintillator1_phys = new G4PVPlacement(0,
 	      G4ThreeVector(scintillator1pos_x,scintillator1pos_y,scintillator1pos_z),
               scintillator1_log,"Scintillator_1",experimentalHall_log,false,0);
@@ -172,17 +168,17 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
 
   //Scintillateur 2
 
-  G4double scintillator2_x = 0.5*m;
-  G4double scintillator2_y = 0.5*m;
-  G4double scintillator2_z = 0.5*m;
+  G4double scintillator2_x = 37.4*cm;
+  G4double scintillator2_y = 1.25*cm;
+  G4double scintillator2_z = 6.55*cm;
   G4Box* scintillator2 = new G4Box("scintillator2",scintillator2_x,
                                           scintillator2_y,scintillator2_z);
   
   scintillator2_log = new G4LogicalVolume(scintillator2,Scintillator,"scintillator2_log",0,0,0);
 
-  G4double scintillator2pos_x = 2.0*m;
-  G4double scintillator2pos_y = 0.0*m;
-  G4double scintillator2pos_z = 0.0*m;
+  G4double scintillator2pos_x = 0.0*cm;
+  G4double scintillator2pos_y = 0.0*cm;
+  G4double scintillator2pos_z = 0.0*cm;
   
   scintillator2_phys = new G4PVPlacement(0,
 	G4ThreeVector(scintillator2pos_x,scintillator2pos_y,scintillator2pos_z),
@@ -197,17 +193,17 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
 
   //Scintillateur 3
 
-  G4double scintillator3_x = 0.5*m;
-  G4double scintillator3_y = 0.5*m;
-  G4double scintillator3_z = 0.5*m;
+  G4double scintillator3_x = 37.4*cm;
+  G4double scintillator3_y = 1.25*cm;
+  G4double scintillator3_z = 6.55*cm;
   G4Box* scintillator3 = new G4Box("scintillator3",scintillator3_x,
                                           scintillator3_y,scintillator3_z);
   
   scintillator3_log = new G4LogicalVolume(scintillator3,
                                    Scintillator,"scintillator3_log",0,0,0);
-  G4double scintillator3pos_x = 4.0*m;
-  G4double scintillator3pos_y = 0.0*m;
-  G4double scintillator3pos_z = 0.0*m;
+  G4double scintillator3pos_x = 0.0*cm;
+  G4double scintillator3pos_y = -7.0*cm;
+  G4double scintillator3pos_z = 0.0*cm;
   scintillator3_phys = new G4PVPlacement(0,
 	      G4ThreeVector(scintillator3pos_x,scintillator3pos_y,scintillator3pos_z),
               scintillator3_log,"Scintillator_3",experimentalHall_log,false,0);
