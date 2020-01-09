@@ -50,7 +50,7 @@ public:
   Gun(G4int nParticle, G4String particleName, G4String rootFile, G4String Ename, G4String thetaName);
   ~Gun();
   
-  void generate(G4Event* anEvent, G4double areaLength, G4double unit);
+  void generate(G4Event* anEvent, G4double areaLength, G4double height, G4double unit);
 };
 
 class ExN01PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction

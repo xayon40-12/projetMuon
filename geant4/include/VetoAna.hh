@@ -7,6 +7,7 @@
 #include "globals.hh"
 
 #include <unordered_map>
+#include <fstream>
 
 class G4VPhysicalVolume;
 class G4Event;
@@ -30,10 +31,11 @@ public:
   void UserSteppingAction(const G4Step*) override;
  
 private:
- G4int trackerCollID;
+  G4int trackerCollID;
  
   G4int event;
   std::unordered_map<G4int, G4String> names;
+  std::ofstream file;
 };
 
 #endif
