@@ -75,7 +75,6 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
 
                     if (ic == 3 && found_up) {
                         time = part0->GetGlobalTime();
-                        auto p0name = part0->GetPartName();
                         double diff = part0->GetGlobalTime() - time_up;
                         if (diff < 0 || diff > max_delay) break;
                     }
@@ -86,6 +85,7 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
                     for (G4int i=0;i<n_hit;i++) {
                         B2TrackerHit *part = (*THC)[i];
                         //set time with first particle generated
+                        auto p0name = part0->GetPartName();
                         if (part->GetPartName() != p0name && !found) { time = part->GetGlobalTime() - time; found = true; }
 
                         //get particle name and total energy
@@ -125,7 +125,7 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
 
     if (ids.size() > 1) {  
         G4cout <<  "Event number " << evt->GetEventID() << ", " << ids.size() << " particle passed through the detector:\n";
-        for (auto part: detected) part.Print();
+        for (auto part: detected[2]) part.Print();
         G4cout << G4endl;
 
         file << time << std::endl;
