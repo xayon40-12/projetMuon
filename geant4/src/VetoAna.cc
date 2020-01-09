@@ -44,7 +44,7 @@ void VetoAna::BeginOfEventAction(const G4Event* /*evt*/) {}
 void VetoAna::EndOfEventAction(const G4Event* evt)
 {
     std::unordered_set<G4int> ids;
-    std::vector<B2TrackerHit> detected;
+    std::vector<B2TrackerHit> detected[3];
     double time = 0, time_up = 0;
     bool found_up = false, found = false;
     double max_delay = 100*ns;
@@ -54,11 +54,11 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
     test->SetEvent(event);
     G4SDManager * SDman = G4SDManager::GetSDMpointer();
 
-    std::string colls[] = {"TrackerHitsCollection1","TrackerHitsCollection3"};
+    std::string colls[3] = {"TrackerHitsCollection1","TrackerHitsCollection2","TrackerHitsCollection3"};
 
     G4HCofThisEvent * HCE = evt->GetHCofThisEvent();
-    for (auto coll: colls) {
-        trackerCollID = SDman->GetCollectionID(coll);
+    for (int ic = 0; ic<3; ic++) {
+        trackerCollID = SDman->GetCollectionID(colls[ic]);
         if(trackerCollID>=0) {
             if(HCE){
                 B2TrackerHitsCollection* THC = (B2TrackerHitsCollection*)(HCE->GetHC(trackerCollID));
@@ -68,44 +68,55 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
 
                     B2TrackerHit *part0 = (*THC)[0];
 
-                    if (coll == "TrackerHitsCollection1") {
+                    if (ic == 1) {
                         found_up = true; 
                         time_up = part0->GetGlobalTime();
                     }
 
-                    if (coll == "TrackerHitsCollection3" && found_up) {
+                    if (ic == 3 && found_up) {
                         time = part0->GetGlobalTime();
                         auto p0name = part0->GetPartName();
                         double diff = part0->GetGlobalTime() - time_up;
                         if (diff < 0 || diff > max_delay) break;
-                        B2TrackerHit lastPart;
-                        G4double totalDeposit = 0;
+                    }
 
-                        for (G4int i=0;i<n_hit;i++) {
-                            B2TrackerHit *part = (*THC)[i];
-                            //set time with first particle generated
-                            if (part->GetPartName() != p0name && !found) { time = part->GetGlobalTime() - time; found = true; }
+                    B2TrackerHit lastPart;
+                    G4double totalDeposit = 0;
 
-                            //get particle name and total energy
-                            G4double Edep = part->GetEdep();
-                            Etot += Edep;
-                            int ID = part->GetTrackID();
+                    for (G4int i=0;i<n_hit;i++) {
+                        B2TrackerHit *part = (*THC)[i];
+                        //set time with first particle generated
+                        if (part->GetPartName() != p0name && !found) { time = part->GetGlobalTime() - time; found = true; }
 
-                            if(ids.find(ID) == ids.end() || i==n_hit-1) {
-                                ids.insert(ID);
-                                if(i != 0) {
-                                    lastPart.SetEdep(totalDeposit);
-                                    lastPart.SetParentName(names[lastPart.GetParentID()]);
-                                    detected.push_back(lastPart);
-                                    //lastPart.Print();
-                                }
-                                part->SetTotalEnergy(part->GetTotalEnergy() + part->GetEdep());// add edep the first time because it is already substracted
-                                lastPart = *part;
-                                totalDeposit = 0;
+                        //get particle name and total energy
+                        G4double Edep = part->GetEdep();
+                        Etot += Edep;
+                        int ID = part->GetTrackID();
+                        
+                        if (part->GetEdep() != 0) lastPart.SetDisappearTime(part->GetGlobalTime());
+
+                        if(ids.find(ID) == ids.end()) {
+                            ids.insert(ID);
+                            if(i != 0) {
+                                lastPart.SetEdep(totalDeposit);
+                                lastPart.SetParentName(names[lastPart.GetParentID()]);
+                                detected[i].push_back(lastPart);
+                                //lastPart.Print();
                             }
-
-                            totalDeposit += part->GetEdep();
+                            part->SetTotalEnergy(part->GetTotalEnergy() + part->GetEdep());// add edep the first time because it is already substracted
+                            part->SetAppearTime(part->GetGlobalTime());
+                            if (part->GetEdep() != 0) part->SetDisappearTime(part->GetGlobalTime());
+                            lastPart = *part;
+                            totalDeposit = 0;
                         }
+
+                        if (i==n_hit-1) {
+                                lastPart.SetEdep(totalDeposit);
+                                lastPart.SetParentName(names[lastPart.GetParentID()]);
+                                detected[i].push_back(lastPart);
+                        } 
+
+                        totalDeposit += part->GetEdep();
                     }
                 }
             }
