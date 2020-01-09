@@ -42,6 +42,9 @@ class B2TrackerHit : public G4VHit
     void SetPos             (G4ThreeVector xyz) { fPos = xyz; };
     void SetPartName        (G4String pName)    { partName = pName; };
     void SetGlobalTime      (G4double time)     { globTime = time; };
+    void SetAppearTime      (G4double time)     { appearTime = time; };
+    void SetDisappearTime   (G4double time)     { disappearTime = time; };
+
 
     // Get methods
     G4int GetTrackID() const            { return fTrackID; };
@@ -54,6 +57,8 @@ class B2TrackerHit : public G4VHit
     G4ThreeVector GetPos() const        { return fPos; };
     G4String GetPartName() const        { return partName; };
     G4double GetGlobalTime() const      { return globTime; };
+    G4double GetAppearTime() const      { return appearTime; };
+    G4double GetDisappearTime() const   { return disappearTime; };
 
   private:
 
@@ -67,6 +72,8 @@ class B2TrackerHit : public G4VHit
       G4ThreeVector fPos;
       G4String      partName;
       G4double      globTime;
+      G4double      appearTime;
+      G4double      disappearTime;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

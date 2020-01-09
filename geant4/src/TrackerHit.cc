@@ -93,14 +93,14 @@ void B2TrackerHit::Print()
 {
   G4cout
      << "    " << partName
-     << "   \tID: " << fTrackID
-     << "   \tparentID: " << fParentID
-     << "   \tparentName: " << fParentName
-     << "   \tcreation process: " << fProcessName
-     << "   \tchamberNb: " << std::setw(2) << fChamberNb
-     << "   \tEdep: " << std::setw(7) << G4BestUnit(fEdep,"Energy")
+     //<< "   \tID: " << fTrackID
+     //<< "   \tparentID: " << fParentID
+     << "   \tparent: " << fParentName
+     << "   \tcreation: " << fProcessName
+     //<< "   \tchamberNb: " << std::setw(2) << fChamberNb
+     //<< "   \tEdep: " << std::setw(7) << G4BestUnit(fEdep,"Energy")
      << "   \ttotal energy: " << std::setw(7) << G4BestUnit(fTotalEnergy,"Energy")
-     << "   \tPosition: " << std::setw(7) << G4BestUnit( fPos,"Length")
+     //<< "   \tPosition: " << std::setw(7) << G4BestUnit( fPos,"Length")
      << "   \ttime: " << std::setw(7) << G4BestUnit( globTime,"Time")
      << G4endl;
 }
