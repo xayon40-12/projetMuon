@@ -136,6 +136,10 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
 	      G4ThreeVector(scintillatorA1pos_x,scintillatorA1pos_y,scintillatorA1pos_z),
               scintillatorA_log,"Scintillator_A1",experimentalHall_log,false,0);
 
+  scintillatorA1_phys = new G4PVPlacement(0,
+	      G4ThreeVector(scintillatorA2pos_x,scintillatorA2pos_y,scintillatorA2pos_z),
+              scintillatorA_log,"Scintillator_A1",experimentalHall_log,false,1);
+
   G4String Scintillator1SDname = "SD1";
   B2TrackerSD* Scintillator1SD = new B2TrackerSD(Scintillator1SDname,
                                             "TrackerHitsCollection1");
@@ -183,9 +187,18 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
   G4double scintillatorC1pos_x = 24.5*cm;
   G4double scintillatorC1pos_y = 0.0*cm;
   G4double scintillatorC1pos_z = -29.4*cm;
+
+  G4double scintillatorC2pos_x = -24.5*cm;
+  G4double scintillatorC2pos_y = 0.0*cm;
+  G4double scintillatorC2pos_z = -29.4*cm;
+  
   scintillatorC1_phys = new G4PVPlacement(0,
 	      G4ThreeVector(scintillatorC1pos_x,scintillatorC1pos_y,scintillatorC1pos_z),
               scintillatorC_log,"Scintillator_C",experimentalHall_log,false,0);
+
+  scintillatorC1_phys = new G4PVPlacement(0,
+	      G4ThreeVector(scintillatorC2pos_x,scintillatorC2pos_y,scintillatorC2pos_z),
+              scintillatorC_log,"Scintillator_C",experimentalHall_log,false,1);
 
   G4String Scintillator3SDname = "SD3";
   B2TrackerSD* Scintillator3SD = new B2TrackerSD(Scintillator3SDname ,
