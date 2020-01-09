@@ -50,16 +50,20 @@ class ExN01DetectorConstruction : public G4VUserDetectorConstruction
     // Logical volumes
     //
     G4LogicalVolume* experimentalHall_log;
-    G4LogicalVolume* scintillator1_log;
-    G4LogicalVolume* scintillator2_log;
-    G4LogicalVolume* scintillator3_log;
+    G4LogicalVolume* scintillatorA_log;
+    G4LogicalVolume* scintillatorB_log;
+    G4LogicalVolume* scintillatorC_log;
+    G4LogicalVolume* wood1_log;
+  //    G4LogicalVolume* wood2_log;
   
     // Physical volumes
     //
     G4VPhysicalVolume* experimentalHall_phys;
-    G4VPhysicalVolume* scintillator1_phys;
-    G4VPhysicalVolume* scintillator2_phys;
-    G4VPhysicalVolume* scintillator3_phys;
+    G4VPhysicalVolume* scintillatorA1_phys;
+    G4VPhysicalVolume* scintillatorB_phys;
+    G4VPhysicalVolume* scintillatorC1_phys;
+    G4VPhysicalVolume* wood1_1_phys;
+    G4VPhysicalVolume* wood1_2_phys;
     
   
 };

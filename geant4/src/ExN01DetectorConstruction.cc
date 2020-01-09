@@ -1,33 +1,3 @@
-//
-// ********************************************************************
-// * License and Disclaimer                                           *
-// *                                                                  *
-// * The  Geant4 software  is  copyright of the Copyright Holders  of *
-// * the Geant4 Collaboration.  It is provided  under  the terms  and *
-// * conditions of the Geant4 Software License,  included in the file *
-// * LICENSE and available at  http://cern.ch/geant4/license .  These *
-// * include a list of copyright holders.                             *
-// *                                                                  *
-// * Neither the authors of this software system, nor their employing *
-// * institutes,nor the agencies providing financial support for this *
-// * work  make  any representation or  warranty, express or implied, *
-// * regarding  this  software system or assume any liability for its *
-// * use.  Please see the license in the file  LICENSE  and URL above *
-// * for the full disclaimer and the limitation of liability.         *
-// *                                                                  *
-// * This  code  implementation is the result of  the  scientific and *
-// * technical work of the GEANT4 collaboration.                      *
-// * By using,  copying,  modifying or  distributing the software (or *
-// * any work based  on the software)  you  agree  to acknowledge its *
-// * use  in  resulting  scientific  publications,  and indicate your *
-// * acceptance of all terms of the Geant4 Software license.          *
-// ********************************************************************
-//
-//
-// $Id: ExN01DetectorConstruction.cc,v 1.9 2006/06/29 17:47:19 gunter Exp $
-// GEANT4 tag $Name: geant4-08-03-patch-01 $
-//
-
 #include "ExN01DetectorConstruction.hh"
 
 #include "G4Material.hh"
@@ -47,8 +17,8 @@
 #include "G4NistManager.hh"
 
 ExN01DetectorConstruction::ExN01DetectorConstruction()
- :  experimentalHall_log(0), scintillator1_log(0), scintillator2_log(0),scintillator3_log(0),
-    experimentalHall_phys(0), scintillator1_phys(0),scintillator2_phys(0),scintillator3_phys(0)
+  :  experimentalHall_log(0), scintillatorA_log(0), scintillatorB_log(0),scintillatorC_log(0),wood1_log(0),
+     experimentalHall_phys(0), scintillatorA1_phys(0),scintillatorB_phys(0),scintillatorC1_phys(0),wood1_1_phys(0),wood1_2_phys(0)
 {;}
 
 ExN01DetectorConstruction::~ExN01DetectorConstruction()
@@ -99,7 +69,6 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
   Wood->AddElement(Mn, 0.1*perCent);
   Wood->AddElement(Fe, 0.1*perCent);
 
-
   G4NistManager* man = G4NistManager::Instance();
   G4Material* csiMaterial = man->FindOrBuildMaterial("G4_CESIUM_IODIDE");
 
@@ -108,9 +77,9 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
   //------------------------------ experimental hall (world volume)
   //------------------------------ beam line along x axis
 
-  G4double expHall_x = 50*cm;
-  G4double expHall_y = 50*cm;
-  G4double expHall_z = 50*cm;
+  G4double expHall_x = 1*m;
+  G4double expHall_y = 1*m;
+  G4double expHall_z = 1*m;
   G4Box* experimentalHall_box
     = new G4Box("expHall_box",expHall_x,expHall_y,expHall_z);
   experimentalHall_log = new G4LogicalVolume(experimentalHall_box,
@@ -142,86 +111,155 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
   //  				   G4ThreeVector(shieldPos_x,shieldPos_y,shieldPos_z),
   //  				   Pbshield_log,"BlindagePb",experimentalHall_log,false,0);
   //------------------------------ a target block
-
-   //Scintillateur1
-
-  G4double scintillator1_x = 37.4*cm;
-  G4double scintillator1_y = 1.25*cm;
-  G4double scintillator1_z = 6.55*cm;
-  G4Box* scintillator1 = new G4Box("scintillator1",scintillator1_x,
-                                          scintillator1_y,scintillator1_z);
   
-  scintillator1_log = new G4LogicalVolume(scintillator1,
-                                   Scintillator,"scintillator1_log",0,0,0);
-  G4double scintillator1pos_x = 0.0*cm;
-  G4double scintillator1pos_y = 7.0*cm;
-  G4double scintillator1pos_z = 0.0*cm;
-  scintillator1_phys = new G4PVPlacement(0,
-	      G4ThreeVector(scintillator1pos_x,scintillator1pos_y,scintillator1pos_z),
-              scintillator1_log,"Scintillator_1",experimentalHall_log,false,0);
+   //Scintillateur A
+
+  G4double scintillatorA_x = 24*cm;
+  G4double scintillatorA_y = 23.9*cm;
+  G4double scintillatorA_z = 1.5*cm;
+
+  G4Box* scintillatorA = new G4Box("scintillatorA",scintillatorA_x,
+                                          scintillatorA_y,scintillatorA_z);
+  
+  scintillatorA_log = new G4LogicalVolume(scintillatorA,
+                                   Scintillator,"scintillatorA_log",0,0,0);
+  
+  G4double scintillatorA1pos_x = 24.5*cm;
+  G4double scintillatorA1pos_y = 0.0*cm;
+  G4double scintillatorA1pos_z = 0.0*cm;
+
+  G4double scintillatorA2pos_x = -24.5*cm;
+  G4double scintillatorA2pos_y = 0.0*cm;
+  G4double scintillatorA2pos_z = 0.0*cm;
+  
+  scintillatorA1_phys = new G4PVPlacement(0,
+	      G4ThreeVector(scintillatorA1pos_x,scintillatorA1pos_y,scintillatorA1pos_z),
+              scintillatorA_log,"Scintillator_A1",experimentalHall_log,false,0);
 
   G4String Scintillator1SDname = "SD1";
   B2TrackerSD* Scintillator1SD = new B2TrackerSD(Scintillator1SDname,
                                             "TrackerHitsCollection1");
   G4SDManager::GetSDMpointer()->AddNewDetector(Scintillator1SD);
-  SetSensitiveDetector("scintillator1_log", Scintillator1SD, true);
+  SetSensitiveDetector("scintillatorA_log", Scintillator1SD, true);
 
-  //Scintillateur 2
+  //Scintillateur B
 
-  G4double scintillator2_x = 37.4*cm;
-  G4double scintillator2_y = 1.25*cm;
-  G4double scintillator2_z = 6.55*cm;
-  G4Box* scintillator2 = new G4Box("scintillator2",scintillator2_x,
-                                          scintillator2_y,scintillator2_z);
+  G4double scintillatorB_x = 74.8*cm;
+  G4double scintillatorB_y = 13.1*cm;
+  G4double scintillatorB_z = 2.5*cm;
   
-  scintillator2_log = new G4LogicalVolume(scintillator2,Scintillator,"scintillator2_log",0,0,0);
-
-  G4double scintillator2pos_x = 0.0*cm;
-  G4double scintillator2pos_y = 0.0*cm;
-  G4double scintillator2pos_z = 0.0*cm;
+  G4Box* scintillatorB = new G4Box("scintillatorB",scintillatorB_x,
+                                          scintillatorB_y,scintillatorB_z);
   
-  scintillator2_phys = new G4PVPlacement(0,
-	G4ThreeVector(scintillator2pos_x,scintillator2pos_y,scintillator2pos_z),
-              scintillator2_log,"Scintillator_2",experimentalHall_log,false,0); 
+  scintillatorB_log = new G4LogicalVolume(scintillatorB,Scintillator,"scintillatorB_log",0,0,0);
+
+  G4double scintillatorBpos_x = 0.0*cm;
+  G4double scintillatorBpos_y = 0.0*cm;
+  G4double scintillatorBpos_z = -20.5*cm;
+  
+  scintillatorB_phys = new G4PVPlacement(0,
+	G4ThreeVector(scintillatorBpos_x,scintillatorBpos_y,scintillatorBpos_z),
+              scintillatorB_log,"Scintillator_B",experimentalHall_log,false,0); 
 
   G4String Scintillator2SDname = "SD2";
   B2TrackerSD* Scintillator2SD = new B2TrackerSD(Scintillator2SDname ,
                                             "TrackerHitsCollection2");
   G4SDManager::GetSDMpointer()->AddNewDetector(Scintillator2SD);
-  SetSensitiveDetector("scintillator2_log", Scintillator2SD, true);
+  SetSensitiveDetector("scintillatorB_log", Scintillator2SD, true);
 
 
-  //Scintillateur 3
+  //Scintillateur C
 
-  G4double scintillator3_x = 37.4*cm;
-  G4double scintillator3_y = 1.25*cm;
-  G4double scintillator3_z = 6.55*cm;
-  G4Box* scintillator3 = new G4Box("scintillator3",scintillator3_x,
-                                          scintillator3_y,scintillator3_z);
+  G4double scintillatorC_x = 24*cm;
+  G4double scintillatorC_y = 23.9*cm;
+  G4double scintillatorC_z = 1.5*cm;
   
-  scintillator3_log = new G4LogicalVolume(scintillator3,
-                                   Scintillator,"scintillator3_log",0,0,0);
-  G4double scintillator3pos_x = 0.0*cm;
-  G4double scintillator3pos_y = -7.0*cm;
-  G4double scintillator3pos_z = 0.0*cm;
-  scintillator3_phys = new G4PVPlacement(0,
-	      G4ThreeVector(scintillator3pos_x,scintillator3pos_y,scintillator3pos_z),
-              scintillator3_log,"Scintillator_3",experimentalHall_log,false,0);
+  G4Box* scintillatorC = new G4Box("scintillatorC",scintillatorC_x,
+                                          scintillatorC_y,scintillatorC_z);
+  
+  scintillatorC_log = new G4LogicalVolume(scintillatorC,
+                                   Scintillator,"scintillatorC_log",0,0,0);
+  
+  G4double scintillatorC1pos_x = 24.5*cm;
+  G4double scintillatorC1pos_y = 0.0*cm;
+  G4double scintillatorC1pos_z = -29.4*cm;
+  scintillatorC1_phys = new G4PVPlacement(0,
+	      G4ThreeVector(scintillatorC1pos_x,scintillatorC1pos_y,scintillatorC1pos_z),
+              scintillatorC_log,"Scintillator_C",experimentalHall_log,false,0);
 
   G4String Scintillator3SDname = "SD3";
   B2TrackerSD* Scintillator3SD = new B2TrackerSD(Scintillator3SDname ,
                                             "TrackerHitsCollection3");
   G4SDManager::GetSDMpointer()->AddNewDetector(Scintillator3SD);
-  SetSensitiveDetector("scintillator3_log", Scintillator3SD, true);
- 
+  SetSensitiveDetector("scintillatorC_log", Scintillator3SD, true);
+
+  //-----------------------------------------------------------------------------------------
+  
+  // Dimensions bois
+  G4double wood1_x = 1*cm;
+  G4double wood1_y = 2*cm;
+  G4double wood1_z = 10*cm;
+
+  G4double wood2_x = 1*cm;//a definir
+  G4double wood2_y = 2*cm;//a definir
+  G4double wood2_z = 10*cm;//a definir
+
+  G4double wood3_x = 1*cm;//a definir
+  G4double wood3_y = 2*cm;//a definir
+  G4double wood3_z = 10*cm;//a definir
+  
+  //Bois 1-1
+  // G4Box* wood1 = new G4Box("wood1",wood1_x,wood1_y,wood1_z);
+  //wood1_log = new G4LogicalVolume(wood1,Wood,"wood1_log",0,0,0);
+  
+  //  G4double wood1_1pos_x = scintillator1pos_x - scintillator1_x - wood1_x;
+  //G4double wood1_1pos_y = scintillator1pos_y;
+  //G4double wood1_1pos_z = scintillator1pos_z;
+  //wood1_1_phys = new G4PVPlacement(0,G4ThreeVector(wood1_1pos_x,wood1_1pos_y,wood1_1pos_z),wood1_log,"Wood1_1",experimentalHall_log,false,0);
+
+  //Bois 1-2
+  //G4Box* wood1_2 = new G4Box("wood1_2",wood1_x,wood1_y,wood1_z);
+  //wood1_2_log = new G4LogicalVolume(wood2,Wood,"wood2_log",0,0,0);
+  
+  //G4double wood2pos_x = scintillator1pos_x + scintillator1_x + wood1_x;
+  //G4double wood2pos_y = scintillator1pos_y;
+  //G4double wood2pos_z = scintillator1pos_z;
+  //wood1_2_phys = new G4PVPlacement(0,G4ThreeVector(wood2pos_x,wood2pos_y,wood2pos_z),wood1_log,"Wood1_2",experimentalHall_log,false,0);
+
+  //Bois 3
+  //  G4double wood3_x = 37.4*cm;
+  //  G4double wood3_y = 1.25*cm;
+  //  G4double wood3_z = 6.55*cm;
+  //  G4Box* wood3 = new G4Box("wood3",wood3_x,wood3_y,wood3_z);
+  //  wood3_log = new G4LogicalVolume(wood3,Wood,"wood3_log",0,0,0);
+  
+  //  G4double wood3pos_x = 0.0*cm;
+  //  G4double wood3pos_y = 7.0*cm;
+  //  G4double wood3pos_z = 0.0*cm;
+  //  wood3_phys = new G4PVPlacement(0,G4ThreeVector(wood3pos_x,wood3pos_y,wood3pos_z),wood3_log,"Wood_3",experimentalHall_log,false,0);
+  
+  //Bois 4
+  //  G4double wood4_x = 37.4*cm;
+  //  G4double wood4_y = 1.25*cm;
+  //  G4double wood4_z = 6.55*cm;
+  //  G4Box* wood4 = new G4Box("wood4",wood4_x,wood4_y,wood4_z);
+  //  wood4_log = new G4LogicalVolume(wood4,Wood,"wood4_log",0,0,0);
+  
+  //  G4double wood4pos_x = 0.0*cm;
+  //  G4double wood4pos_y = 7.0*cm;
+  //  G4double wood4pos_z = 0.0*cm;
+  //  wood4_phys = new G4PVPlacement(0,G4ThreeVector(wood4pos_x,wood4pos_y,wood4pos_z),wood4_log,"Wood_4",experimentalHall_log,false,0);
   
 //--------- Visualization attributes -------------------------------
 
   G4VisAttributes* targetVisAtt= new G4VisAttributes(G4Colour(1.0,1.0,1.0));
   experimentalHall_log->SetVisAttributes(targetVisAtt);  
-  scintillator1_log ->SetVisAttributes(targetVisAtt);
-  scintillator2_log ->SetVisAttributes(targetVisAtt);
-  scintillator3_log ->SetVisAttributes(targetVisAtt);
+  scintillatorA_log ->SetVisAttributes(targetVisAtt);
+  scintillatorB_log ->SetVisAttributes(targetVisAtt);
+  scintillatorC_log ->SetVisAttributes(targetVisAtt);
+  //wood1_log ->SetVisAttributes(targetVisAtt);
+  //  wood2_log ->SetVisAttributes(targetVisAtt);
+  //wood3_log ->SetVisAttributes(targetVisAtt);
 
   return experimentalHall_phys;
 }
