@@ -54,7 +54,7 @@ void Gun::generate(G4Event* anEvent, G4double areaLength, G4double height, G4dou
   gun.SetParticlePosition(G4ThreeVector(areaLength*(G4UniformRand()-0.5),height,areaLength*(G4UniformRand()-0.5)));
   auto phi = G4UniformRand()*2*3.1415;
   auto theta = distTheta->GetRandom();
-  gun.SetParticleMomentumDirection(G4ThreeVector(cos(phi)*sin(theta),cos(theta),sin(phi)*sin(theta)));
+  gun.SetParticleMomentumDirection(G4ThreeVector(cos(phi)*sin(theta),sin(phi)*sin(theta),cos(theta)));
   
   gun.GeneratePrimaryVertex(anEvent);
 }
