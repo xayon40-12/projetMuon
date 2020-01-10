@@ -17,8 +17,8 @@
 #include "G4NistManager.hh"
 
 ExN01DetectorConstruction::ExN01DetectorConstruction()
-  :  experimentalHall_log(0), scintillatorA_log(0), scintillatorB_log(0),scintillatorC_log(0),wood1_log(0),
-     experimentalHall_phys(0), scintillatorA1_phys(0),scintillatorB_phys(0),scintillatorC1_phys(0),wood1_1_phys(0),wood1_2_phys(0)
+  :  experimentalHall_log(0), scintillatorA_log(0), scintillatorB_log(0),scintillatorC_log(0),woodinterieur_log(0),woodexterieur_log(0),alexterieur_log(0),alinterieur_log(0),
+     experimentalHall_phys(0), scintillatorA1_phys(0),scintillatorB_phys(0),scintillatorC1_phys(0),woodinterieur_phys(0),woodexterieur_phys(0),alexterieur_phys(0),alinterieur_phys(0)
 {;}
 
 ExN01DetectorConstruction::~ExN01DetectorConstruction()
@@ -41,7 +41,7 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
   G4Element* O = new G4Element("Oxygen"  , "O", z=8., a= 16.00*g/mole);
   G4Element* Na = new G4Element("Sodium"  , "Na", z=11., a= 22.99*g/mole);
   G4Element* Mg = new G4Element("Magnesium"  , "Mg", z=12., a= 24.31*g/mole);
-  G4Element* Al = new G4Element("Aluminium"  , "Al", z=13., a= 26.98*g/mole);
+  //G4Element* Al = new G4Element("Aluminium"  , "Al", z=13., a= 26.98*g/mole);
   G4Element* K = new G4Element("Potasium"  , "K", z=19., a= 39.10*g/mole);
   G4Element* Ca = new G4Element("Calcium"  , "Ca", z=20., a= 40.08*g/mole);
   G4Element* Mn = new G4Element("Manganese"  , "Mn", z=25., a= 54.94*g/mole);
@@ -69,6 +69,9 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
   Wood->AddElement(Mn, 0.1*perCent);
   Wood->AddElement(Fe, 0.1*perCent);
 
+  //Aluminium
+  G4Material* Al = new G4Material("Aluminium", z=13., a= 26.98*g/mole,density= 0.8*g/cm3);
+
   G4NistManager* man = G4NistManager::Instance();
   G4Material* csiMaterial = man->FindOrBuildMaterial("G4_CESIUM_IODIDE");
 
@@ -87,30 +90,40 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
   experimentalHall_phys = new G4PVPlacement(0,G4ThreeVector(),
                                       experimentalHall_log,"expHall",0,false,0);
 
-  //------------------------------ Lead shielding
-  //  G4double innerRadiusOfTheTubeshield = 3/2.*mm;
-  //  G4double outerRadiusOfTheTubeshield = 24/2.*mm;
-  //  G4double hightOfTheTubeshield = 105/2.*mm;
-  //  G4double startAngleOfTheTubeshield = 0.*deg;
-  //  G4double spanningAngleOfTheTubeshield = 360.*deg;
-  //  G4Tubs* Pbshield
-  //    = new G4Tubs("Pbshield",
-  //  		 innerRadiusOfTheTubeshield,
-  //  		 outerRadiusOfTheTubeshield,
-  //  		 hightOfTheTubeshield,
-  //  		 startAngleOfTheTubeshield,
-  //  		 spanningAngleOfTheTubeshield);
+ 
+  //Bois exterieur
+
+  // Dimensions bois exterieur
+  G4double woodexterieur_x = 50.3*cm;
+  G4double woodexterieur_y = 32.8*cm;
+  G4double woodexterieur_z = 5.9*cm;
   
-  //  Pbshield_log = new G4LogicalVolume(Pbshield,
-  //  				    Pb,"Pbshield_log",0,0,0);
+  G4Box* woodexterieur = new G4Box("woodexterieur",woodexterieur_x,woodexterieur_y,woodexterieur_z);
+  woodexterieur_log = new G4LogicalVolume(woodexterieur,Wood,"woodexterieur_log",0,0,0);
+
+  // Position bois exterieur
+  G4double woodexterieur_pos_x = 0*cm;
+  G4double woodexterieur_pos_y = 0*cm;
+  G4double woodexterieur_pos_z = 0*cm;
+  woodexterieur_phys = new G4PVPlacement(0,G4ThreeVector(woodexterieur_pos_x,woodexterieur_pos_y,woodexterieur_pos_z),woodexterieur_log,"Woodexterieur",experimentalHall_log,false,0);
   
-  //  G4double shieldPos_x = 0.0*mm;
-  //  G4double shieldPos_y = 0.0*mm;
-  //  G4double shieldPos_z = -72.85*mm;
-  //  Pbshield_phys = new G4PVPlacement(0,
-  //  				   G4ThreeVector(shieldPos_x,shieldPos_y,shieldPos_z),
-  //  				   Pbshield_log,"BlindagePb",experimentalHall_log,false,0);
-  //------------------------------ a target block
+  //Bois interieur (contient de l'air)
+  
+  // Dimensions bois interieur
+  G4double woodinterieur_x = 48.5*cm;
+  G4double woodinterieur_y = 31*cm;
+  G4double woodinterieur_z = 4.1*cm;
+  
+  G4Box* woodinterieur = new G4Box("woodinterieur",woodinterieur_x,woodinterieur_y,woodinterieur_z);
+  woodinterieur_log = new G4LogicalVolume(woodinterieur,Air,"woodinterieur_log",0,0,0);
+
+  // Position bois interieur (par rapport au volume mere bois exterieur)
+  // Les 2 volumes sont centrés au même endroit
+  G4double woodinterieur_pos_x = 0*cm;
+  G4double woodinterieur_pos_y = 0*cm;
+  G4double woodinterieur_pos_z = 0*cm;
+  
+  woodinterieur_phys = new G4PVPlacement(0,G4ThreeVector(woodinterieur_pos_x,woodinterieur_pos_y,woodinterieur_pos_z),woodinterieur_log,"Woodinterieur",woodexterieur_log,false,0);
   
    //Scintillateur A
 
@@ -125,20 +138,20 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
                                    Scintillator,"scintillatorA_log",0,0,0);
   
   G4double scintillatorA1pos_x = 24.5*cm;
-  G4double scintillatorA1pos_y = 0.0*cm;
+  G4double scintillatorA1pos_y = -6.9*cm;
   G4double scintillatorA1pos_z = 0.0*cm;
 
   G4double scintillatorA2pos_x = -24.5*cm;
-  G4double scintillatorA2pos_y = 0.0*cm;
+  G4double scintillatorA2pos_y = -6.9*cm;
   G4double scintillatorA2pos_z = 0.0*cm;
   
   scintillatorA1_phys = new G4PVPlacement(0,
 	      G4ThreeVector(scintillatorA1pos_x,scintillatorA1pos_y,scintillatorA1pos_z),
-              scintillatorA_log,"Scintillator_A1",experimentalHall_log,false,0);
+              scintillatorA_log,"Scintillator_A1",woodinterieur_log,false,0);
 
   scintillatorA1_phys = new G4PVPlacement(0,
 	      G4ThreeVector(scintillatorA2pos_x,scintillatorA2pos_y,scintillatorA2pos_z),
-              scintillatorA_log,"Scintillator_A1",experimentalHall_log,false,1);
+              scintillatorA_log,"Scintillator_A1",woodinterieur_log,false,1);
 
   G4String Scintillator1SDname = "SD1";
   B2TrackerSD* Scintillator1SD = new B2TrackerSD(Scintillator1SDname,
@@ -146,6 +159,40 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
   G4SDManager::GetSDMpointer()->AddNewDetector(Scintillator1SD);
   SetSensitiveDetector("scintillatorA_log", Scintillator1SD, true);
 
+  // Aluminium exterieur
+
+   // Dimensions aluminium exterieur
+  G4double alexterieur_x = 75.5*cm;
+  G4double alexterieur_y = 13.6*cm;
+  G4double alexterieur_z = 7.9*cm;
+  
+  G4Box* alexterieur = new G4Box("alexterieur",alexterieur_x,alexterieur_y,alexterieur_z);
+  alexterieur_log = new G4LogicalVolume(alexterieur,Al,"alexterieur_log",0,0,0);
+
+  // Position aluminium exterieur
+  G4double alexterieur_pos_x = 0*cm;
+  G4double alexterieur_pos_y = -6.9*cm;
+  G4double alexterieur_pos_z = -15.6*cm;
+  alexterieur_phys = new G4PVPlacement(0,G4ThreeVector(alexterieur_pos_x,alexterieur_pos_y,alexterieur_pos_z),alexterieur_log,"alexterieur",experimentalHall_log,false,0);
+  
+  // Metal interieur (contient de l'air)
+  
+  // Dimensions aluminium interieur
+  G4double alinterieur_x = 75*cm;
+  G4double alinterieur_y = 13.1*cm;
+  G4double alinterieur_z = 7.4*cm;
+  
+  G4Box* alinterieur = new G4Box("alinterieur",alinterieur_x,alinterieur_y,alinterieur_z);
+  alinterieur_log = new G4LogicalVolume(alinterieur,Air,"alinterieur_log",0,0,0);
+
+  // Position aluminium interieur (par rapport au volume mere aluminium exterieur)
+  // Les 2 volumes sont centrés au même endroit
+  G4double alinterieur_pos_x = 0*cm;
+  G4double alinterieur_pos_y = 0*cm;
+  G4double alinterieur_pos_z = 0*cm;
+  
+  alinterieur_phys = new G4PVPlacement(0,G4ThreeVector(alinterieur_pos_x,alinterieur_pos_y,alinterieur_pos_z),alinterieur_log,"alinterieur",alexterieur_log,false,0);
+  
   //Scintillateur B
 
   G4double scintillatorB_x = 74.8*cm;
@@ -159,11 +206,11 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
 
   G4double scintillatorBpos_x = 0.0*cm;
   G4double scintillatorBpos_y = 0.0*cm;
-  G4double scintillatorBpos_z = -20.5*cm;
+  G4double scintillatorBpos_z = -4.9*cm;
   
   scintillatorB_phys = new G4PVPlacement(0,
 	G4ThreeVector(scintillatorBpos_x,scintillatorBpos_y,scintillatorBpos_z),
-              scintillatorB_log,"Scintillator_B",experimentalHall_log,false,0); 
+              scintillatorB_log,"Scintillator_B",alinterieur_log,false,0); 
 
   G4String Scintillator2SDname = "SD2";
   B2TrackerSD* Scintillator2SD = new B2TrackerSD(Scintillator2SDname ,
@@ -173,7 +220,7 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
 
 
   //Scintillateur C
-
+  
   G4double scintillatorC_x = 24*cm;
   G4double scintillatorC_y = 23.9*cm;
   G4double scintillatorC_z = 1.5*cm;
@@ -205,63 +252,10 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
                                             "TrackerHitsCollection3");
   G4SDManager::GetSDMpointer()->AddNewDetector(Scintillator3SD);
   SetSensitiveDetector("scintillatorC_log", Scintillator3SD, true);
-
+  
   //-----------------------------------------------------------------------------------------
   
-  // Dimensions bois
-  G4double wood1_x = 1*cm;
-  G4double wood1_y = 2*cm;
-  G4double wood1_z = 10*cm;
 
-  G4double wood2_x = 1*cm;//a definir
-  G4double wood2_y = 2*cm;//a definir
-  G4double wood2_z = 10*cm;//a definir
-
-  G4double wood3_x = 1*cm;//a definir
-  G4double wood3_y = 2*cm;//a definir
-  G4double wood3_z = 10*cm;//a definir
-  
-  //Bois 1-1
-  // G4Box* wood1 = new G4Box("wood1",wood1_x,wood1_y,wood1_z);
-  //wood1_log = new G4LogicalVolume(wood1,Wood,"wood1_log",0,0,0);
-  
-  //  G4double wood1_1pos_x = scintillator1pos_x - scintillator1_x - wood1_x;
-  //G4double wood1_1pos_y = scintillator1pos_y;
-  //G4double wood1_1pos_z = scintillator1pos_z;
-  //wood1_1_phys = new G4PVPlacement(0,G4ThreeVector(wood1_1pos_x,wood1_1pos_y,wood1_1pos_z),wood1_log,"Wood1_1",experimentalHall_log,false,0);
-
-  //Bois 1-2
-  //G4Box* wood1_2 = new G4Box("wood1_2",wood1_x,wood1_y,wood1_z);
-  //wood1_2_log = new G4LogicalVolume(wood2,Wood,"wood2_log",0,0,0);
-  
-  //G4double wood2pos_x = scintillator1pos_x + scintillator1_x + wood1_x;
-  //G4double wood2pos_y = scintillator1pos_y;
-  //G4double wood2pos_z = scintillator1pos_z;
-  //wood1_2_phys = new G4PVPlacement(0,G4ThreeVector(wood2pos_x,wood2pos_y,wood2pos_z),wood1_log,"Wood1_2",experimentalHall_log,false,0);
-
-  //Bois 3
-  //  G4double wood3_x = 37.4*cm;
-  //  G4double wood3_y = 1.25*cm;
-  //  G4double wood3_z = 6.55*cm;
-  //  G4Box* wood3 = new G4Box("wood3",wood3_x,wood3_y,wood3_z);
-  //  wood3_log = new G4LogicalVolume(wood3,Wood,"wood3_log",0,0,0);
-  
-  //  G4double wood3pos_x = 0.0*cm;
-  //  G4double wood3pos_y = 7.0*cm;
-  //  G4double wood3pos_z = 0.0*cm;
-  //  wood3_phys = new G4PVPlacement(0,G4ThreeVector(wood3pos_x,wood3pos_y,wood3pos_z),wood3_log,"Wood_3",experimentalHall_log,false,0);
-  
-  //Bois 4
-  //  G4double wood4_x = 37.4*cm;
-  //  G4double wood4_y = 1.25*cm;
-  //  G4double wood4_z = 6.55*cm;
-  //  G4Box* wood4 = new G4Box("wood4",wood4_x,wood4_y,wood4_z);
-  //  wood4_log = new G4LogicalVolume(wood4,Wood,"wood4_log",0,0,0);
-  
-  //  G4double wood4pos_x = 0.0*cm;
-  //  G4double wood4pos_y = 7.0*cm;
-  //  G4double wood4pos_z = 0.0*cm;
-  //  wood4_phys = new G4PVPlacement(0,G4ThreeVector(wood4pos_x,wood4pos_y,wood4pos_z),wood4_log,"Wood_4",experimentalHall_log,false,0);
   
 //--------- Visualization attributes -------------------------------
 
@@ -270,10 +264,11 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
   scintillatorA_log ->SetVisAttributes(targetVisAtt);
   scintillatorB_log ->SetVisAttributes(targetVisAtt);
   scintillatorC_log ->SetVisAttributes(targetVisAtt);
-  //wood1_log ->SetVisAttributes(targetVisAtt);
-  //  wood2_log ->SetVisAttributes(targetVisAtt);
-  //wood3_log ->SetVisAttributes(targetVisAtt);
-
+  woodinterieur_log ->SetVisAttributes(targetVisAtt);
+  woodexterieur_log ->SetVisAttributes(targetVisAtt);
+  alinterieur_log ->SetVisAttributes(targetVisAtt);
+  alexterieur_log ->SetVisAttributes(targetVisAtt);
+  
   return experimentalHall_phys;
 }
 

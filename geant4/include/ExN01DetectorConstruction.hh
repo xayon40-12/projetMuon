@@ -53,8 +53,10 @@ class ExN01DetectorConstruction : public G4VUserDetectorConstruction
     G4LogicalVolume* scintillatorA_log;
     G4LogicalVolume* scintillatorB_log;
     G4LogicalVolume* scintillatorC_log;
-    G4LogicalVolume* wood1_log;
-  //    G4LogicalVolume* wood2_log;
+    G4LogicalVolume* woodinterieur_log;
+    G4LogicalVolume* woodexterieur_log;
+    G4LogicalVolume* alinterieur_log;
+    G4LogicalVolume* alexterieur_log;
   
     // Physical volumes
     //
@@ -62,8 +64,10 @@ class ExN01DetectorConstruction : public G4VUserDetectorConstruction
     G4VPhysicalVolume* scintillatorA1_phys;
     G4VPhysicalVolume* scintillatorB_phys;
     G4VPhysicalVolume* scintillatorC1_phys;
-    G4VPhysicalVolume* wood1_1_phys;
-    G4VPhysicalVolume* wood1_2_phys;
+    G4VPhysicalVolume* woodinterieur_phys;
+    G4VPhysicalVolume* woodexterieur_phys;
+    G4VPhysicalVolume* alinterieur_phys;
+    G4VPhysicalVolume* alexterieur_phys;
     
   
 };
