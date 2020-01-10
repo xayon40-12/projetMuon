@@ -57,6 +57,8 @@ class ExN01DetectorConstruction : public G4VUserDetectorConstruction
     G4LogicalVolume* woodexterieur_log;
     G4LogicalVolume* alinterieur_log;
     G4LogicalVolume* alexterieur_log;
+    G4LogicalVolume* woodinterieur2_log;
+    G4LogicalVolume* woodexterieur2_log;
   
     // Physical volumes
     //
@@ -68,7 +70,8 @@ class ExN01DetectorConstruction : public G4VUserDetectorConstruction
     G4VPhysicalVolume* woodexterieur_phys;
     G4VPhysicalVolume* alinterieur_phys;
     G4VPhysicalVolume* alexterieur_phys;
-    
+    G4VPhysicalVolume* woodinterieur2_phys;
+    G4VPhysicalVolume* woodexterieur2_phys;
   
 };
 
