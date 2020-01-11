@@ -70,7 +70,7 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
   Wood->AddElement(Fe, 0.1*perCent);
 
   //Aluminium
-  G4Material* Al = new G4Material("Aluminium", z=13., a= 26.98*g/mole,density= 0.8*g/cm3);
+  G4Material* Al = new G4Material("Aluminium", z=13., a= 26.98*g/mole,density= 2.6989*g/cm3);
 
   G4NistManager* man = G4NistManager::Instance();
   G4Material* csiMaterial = man->FindOrBuildMaterial("G4_CESIUM_IODIDE");
