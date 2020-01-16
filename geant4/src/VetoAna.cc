@@ -67,6 +67,7 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
                     if (n_hit < 1) continue;
 
                     B2TrackerHit *part0 = (*THC)[0];
+                    auto p0name = part0->GetPartName();
 
                     if (ic == 1) {
                         found_up = true; 
@@ -85,7 +86,6 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
                     for (G4int i=0;i<n_hit;i++) {
                         B2TrackerHit *part = (*THC)[i];
                         //set time with first particle generated
-                        auto p0name = part0->GetPartName();
                         if (part->GetPartName() != p0name && !found) { time = part->GetGlobalTime() - time; found = true; }
 
                         //get particle name and total energy
@@ -93,14 +93,14 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
                         Etot += Edep;
                         int ID = part->GetTrackID();
                         
-                        if (part->GetEdep() != 0) lastPart.SetDisappearTime(part->GetGlobalTime());
+                        if (part->GetEdep() != 0 && i != 0) lastPart.SetDisappearTime(part->GetGlobalTime());
 
                         if(ids.find(ID) == ids.end()) {
                             ids.insert(ID);
                             if(i != 0) {
                                 lastPart.SetEdep(totalDeposit);
                                 lastPart.SetParentName(names[lastPart.GetParentID()]);
-                                detected[i].push_back(lastPart);
+                                detected[ic].push_back(lastPart);
                                 //lastPart.Print();
                             }
                             part->SetTotalEnergy(part->GetTotalEnergy() + part->GetEdep());// add edep the first time because it is already substracted
@@ -109,15 +109,11 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
                             lastPart = *part;
                             totalDeposit = 0;
                         }
-
-                        if (i==n_hit-1) {
-                                lastPart.SetEdep(totalDeposit);
-                                lastPart.SetParentName(names[lastPart.GetParentID()]);
-                                detected[i].push_back(lastPart);
-                        } 
-
                         totalDeposit += part->GetEdep();
                     }
+                    lastPart.SetEdep(totalDeposit);
+                    lastPart.SetParentName(names[lastPart.GetParentID()]);
+                    detected[ic].push_back(lastPart);
                 }
             }
         }

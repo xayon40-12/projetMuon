@@ -42,7 +42,7 @@ class B2TrackerHit : public G4VHit
     void SetPos             (G4ThreeVector xyz) { fPos = xyz; };
     void SetPartName        (G4String pName)    { partName = pName; };
     void SetGlobalTime      (G4double time)     { globTime = time; };
-    void SetAppearTime      (G4double time)     { appearTime = time; };
+    void SetAppearTime      (G4double time)     { appearTime = time; disappearTime = time; };
     void SetDisappearTime   (G4double time)     { disappearTime = time; };
 
 

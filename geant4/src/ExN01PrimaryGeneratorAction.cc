@@ -51,10 +51,10 @@ Gun::~Gun() {
 
 void Gun::generate(G4Event* anEvent, G4double areaLength, G4double height, G4double unit) {
   gun.SetParticleEnergy(distE->GetRandom()*unit);
-  gun.SetParticlePosition(G4ThreeVector(areaLength*(G4UniformRand()-0.5),height,areaLength*(G4UniformRand()-0.5)));
+  gun.SetParticlePosition(G4ThreeVector(areaLength*2*(G4UniformRand()-0.5),areaLength*2*(G4UniformRand()-0.5),height));
   auto phi = G4UniformRand()*2*3.1415;
   auto theta = distTheta->GetRandom();
-  gun.SetParticleMomentumDirection(G4ThreeVector(cos(phi)*sin(theta),sin(phi)*sin(theta),cos(theta)));
+  gun.SetParticleMomentumDirection(G4ThreeVector(sin(phi)*sin(theta),cos(phi)*sin(theta),cos(theta)));
   
   gun.GeneratePrimaryVertex(anEvent);
 }
@@ -67,7 +67,7 @@ ExN01PrimaryGeneratorAction::~ExN01PrimaryGeneratorAction() {}
 
 void ExN01PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
-    muGun.generate(anEvent, 10.*m, 10.*m, GeV);
+    muGun.generate(anEvent, 3.*m, 1.*m, GeV);
 }
 
 
