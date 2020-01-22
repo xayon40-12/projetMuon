@@ -1,5 +1,6 @@
 #ifndef ELECTRONICS_HH
 #define ELECTRONICS_HH
+#include <vector>
 
 std::vector<bool> gate(std::vector<double> &energy, double threshold, double gateTime, double binTime);
 std::vector<bool> coincidence(std::vector<bool> &energy1,std::vector<bool> &energy2, double gateTime, double binTime);
