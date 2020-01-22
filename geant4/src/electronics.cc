@@ -47,3 +47,26 @@ std::vector<bool> anti_coincidence(std::vector<bool> &energy1,std::vector<bool> 
       }
     return result;
   }
+
+std::vector<double> timer(std::vector<bool> &start, std::vector<bool> &stop, double gateDeadTime, double binTime)
+{
+  double time=0.0;
+  bool trig=false;
+  std::vector<double> times;
+  for(int i=0;start.size();i++)
+    {
+      if(start[i] && !trig)
+	{
+	  trig=true;
+	  time=i;
+	}
+      if(stop && trig)
+	{
+	  trig=false;
+	  time=(i-time)*binTime;
+	  times.push_back(time);
+	  i+=gateDeadTime/binTime;
+	} 
+    }
+  return times;
+}
