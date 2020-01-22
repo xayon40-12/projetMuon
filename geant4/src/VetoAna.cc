@@ -26,7 +26,7 @@
 #include "RootFile_evt.hh"
 extern RootFile_evt *test;
 
-VetoAna::VetoAna(): trackerCollID(0), event(0), file("simulated_times.txt") {}
+VetoAna::VetoAna(): trackerCollID(0), event(0), file_decay("simulated_decay.txt"), file_elec("simulated_elec.txt") {}
 VetoAna::~VetoAna() {}
 
 void VetoAna::BeginOfRunAction(const G4Run *aRun)
@@ -45,8 +45,11 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
 {
     std::unordered_set<G4int> ids;
     std::vector<B2TrackerHit> detected[3];
+    std::vector<B2TrackerHit> tracks[3];
+    std::vector<double> energy[3];
+    double bin_time = 0.01*ns;
     double time = 0, time_up = 0;
-    bool found_up = false, found = false;
+    bool found_up = false, found_down = false, found = false;
     double max_delay = 100*ns;
     G4double Etot = 0;
 
@@ -64,34 +67,35 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
                 B2TrackerHitsCollection* THC = (B2TrackerHitsCollection*)(HCE->GetHC(trackerCollID));
                 if(THC){
                     int n_hit = THC->entries();
-                    if (n_hit < 1) continue;
-
-                    B2TrackerHit *part0 = (*THC)[0];
-                    auto p0name = part0->GetPartName();
-
-                    if (ic == 1) {
-                        found_up = true; 
-                        time_up = part0->GetGlobalTime();
-                    }
-
-                    if (ic == 3 && found_up) {
-                        time = part0->GetGlobalTime();
-                        double diff = part0->GetGlobalTime() - time_up;
-                        if (diff < 0 || diff > max_delay) break;
-                    }
 
                     B2TrackerHit lastPart;
                     G4double totalDeposit = 0;
 
                     for (G4int i=0;i<n_hit;i++) {
                         B2TrackerHit *part = (*THC)[i];
-                        //set time with first particle generated
-                        if (part->GetPartName() != p0name && !found) { time = part->GetGlobalTime() - time; found = true; }
+
+                        //store deposit energy
+                        tracks[ic].push_back(*part);
 
                         //get particle name and total energy
                         G4double Edep = part->GetEdep();
                         Etot += Edep;
                         int ID = part->GetTrackID();
+
+                        if (ic == 0 && part->GetPartName() == "mu-" && !found_up) {
+                            found_up = true; 
+                            time_up = part->GetGlobalTime();
+                        }
+                        if (ic == 2 && found_up) {
+                            if (part->GetPartName() == "mu-" && !found_down) {
+                                found_down = true;
+                                time = part->GetGlobalTime();
+                            }
+                            if (part->GetCreationProcess() == "Decay" && !found) {
+                                found = true;
+                                time = part->GetGlobalTime() - time;    
+                            }
+                        }
                         
                         if (part->GetEdep() != 0 && i != 0) lastPart.SetDisappearTime(part->GetGlobalTime());
 
@@ -119,12 +123,12 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
         }
     }
 
-    if (ids.size() > 1) {  
+    if (found) {  
         G4cout <<  "Event number " << evt->GetEventID() << ", " << ids.size() << " particle passed through the detector:\n";
         for (auto part: detected[2]) part.Print();
         G4cout << G4endl;
 
-        file << time << std::endl;
+        file_decay << time << std::endl;
 
         //if(Etot > 0) test->SettotEPb(Etot);
         //test->SetTime(time);

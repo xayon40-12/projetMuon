@@ -35,7 +35,7 @@ private:
  
   G4int event;
   std::unordered_map<G4int, G4String> names;
-  std::ofstream file;
+  std::ofstream file_decay, file_elec;
 };
 
 #endif
