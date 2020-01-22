@@ -2,7 +2,7 @@
 
 std::vector<bool> gate(std::vector<double> &energy, double threshold, double gateTime, double binTime)
 {
-  std::vector<bool> result(energy.size();
+  std::vector<bool> result(energy.size());
   for (int i=0;energy.size();i++)
     {
       if(energy[i]>threshold)
@@ -17,6 +17,7 @@ return result;
 
 std::vector<bool> anti_coincidence(std::vector<bool> &energy1,std::vector<bool> &energy2, double gateTime, double binTime)
   {
+    std::vector<bool> result(energy1.size());
     for(int i=0;i<energy1.size();i++)
       {
 	if(energy1[i] && !energy2[i])
