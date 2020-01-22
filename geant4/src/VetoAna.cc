@@ -131,8 +131,8 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
         file_decay << time << std::endl;
 
         //if(Etot > 0) test->SettotEPb(Etot);
-        //test->SetTime(time);
-        //test->FillTree();
+        test->SetTime(time);
+        test->FillTree();
     }     
 }
 void VetoAna::UserSteppingAction(const G4Step* aStep)
