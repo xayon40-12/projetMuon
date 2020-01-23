@@ -26,7 +26,7 @@
 #include "RootFile_evt.hh"
 extern RootFile_evt *test;
 
-VetoAna::VetoAna(): trackerCollID(0), event(0), file_decay("simulated_decay.txt"), file_elec("simulated_elec.txt") {}
+VetoAna::VetoAna(): trackerCollID(0), event(0), file_decay("simulated_decay.txt"), file_elec("simulated_elec.txt"), bin_time(0.1*ns) {}
 VetoAna::~VetoAna() {}
 
 void VetoAna::BeginOfRunAction(const G4Run *aRun)
@@ -45,12 +45,10 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
 {
     std::unordered_set<G4int> ids;
     std::vector<B2TrackerHit> detected[3];
-    std::vector<B2TrackerHit> tracks[3];
-    std::vector<double> energy[3];
-    double bin_time = 0.01*ns;
     double time = 0, time_up = 0;
     bool found_up = false, found_down = false, found = false;
     double max_delay = 100*ns;
+    double toffset = 0*evt->GetEventID(); // TODO change 0 with muon emmition interval
     G4double Etot = 0;
 
     event=evt->GetEventID();
@@ -75,7 +73,9 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
                         B2TrackerHit *part = (*THC)[i];
 
                         //store deposit energy
-                        tracks[ic].push_back(*part);
+                        unsigned int it = (part->GetGlobalTime()+toffset)/bin_time;
+                        if(energy[ic].size() <= it) energy[ic].resize(2*it,0); 
+                        energy[ic][it] += part->GetEdep();
 
                         //get particle name and total energy
                         G4double Edep = part->GetEdep();

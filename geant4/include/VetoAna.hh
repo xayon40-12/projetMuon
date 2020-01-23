@@ -18,24 +18,26 @@ class G4HCofThisEvent;
 
 
 class VetoAna : public G4UserSteppingAction, public G4UserEventAction, public G4UserRunAction {
-public:
-  VetoAna();
-  virtual ~VetoAna();
+    public:
+        VetoAna();
+        virtual ~VetoAna();
 
-  void BeginOfRunAction(const G4Run*) override;
-  void EndOfRunAction(const G4Run*) override;
-  
-  void BeginOfEventAction(const G4Event*) override;
+        void BeginOfRunAction(const G4Run*) override;
+        void EndOfRunAction(const G4Run*) override;
 
-  void EndOfEventAction(const G4Event*) override;
-  void UserSteppingAction(const G4Step*) override;
- 
-private:
-  G4int trackerCollID;
- 
-  G4int event;
-  std::unordered_map<G4int, G4String> names;
-  std::ofstream file_decay, file_elec;
+        void BeginOfEventAction(const G4Event*) override;
+
+        void EndOfEventAction(const G4Event*) override;
+        void UserSteppingAction(const G4Step*) override;
+
+    private:
+        G4int trackerCollID;
+
+        G4int event;
+        std::unordered_map<G4int, G4String> names;
+        std::ofstream file_decay, file_elec;
+        std::vector<double> energy[3];
+        double bin_time;
 };
 
 #endif
