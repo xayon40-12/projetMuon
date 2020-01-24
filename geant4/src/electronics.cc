@@ -71,4 +71,4 @@ std::vector<double> timer(std::vector<bool> &start, std::vector<bool> &stop, dou
   return times;
 }
 
-std::vector<double> convol(std::vector<B2TrackerHit> &tracks
+

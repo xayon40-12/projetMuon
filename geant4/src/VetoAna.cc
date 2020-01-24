@@ -128,7 +128,7 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
         for (auto part: detected[2]) part.Print();
         G4cout << G4endl;
 
-        file_decay << time << std::endl;
+        file_decay << time/1000 << std::endl;
 
         //if(Etot > 0) test->SettotEPb(Etot);
         test->SetTime(time);

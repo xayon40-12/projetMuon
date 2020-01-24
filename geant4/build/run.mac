@@ -13,4 +13,4 @@
 #
 # /gun/particle e-
 /tracking/verbose 0
-/run/beamOn 30000000
+/run/beamOn 300000
