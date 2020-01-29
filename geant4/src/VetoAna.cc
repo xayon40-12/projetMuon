@@ -11,7 +11,6 @@
 #include "G4UImanager.hh"
 #include "G4ios.hh"
 #include "G4Run.hh"
-//#include "RootFile_evt.hh"
 
 #include "CLHEP/Random/RandGauss.h"
 #include "VetoAna.hh"
@@ -19,14 +18,12 @@
 #include "G4SystemOfUnits.hh"
 #include "G4UnitsTable.hh"
 
-//extern RootFile_evt *test; 
 
 #include <unordered_set>
 
-#include "RootFile_evt.hh"
-extern RootFile_evt *test;
+#include "electronics.hh"
 
-VetoAna::VetoAna(): trackerCollID(0), event(0), file_decay("simulated_decay.txt"), file_elec("simulated_elec.txt"), bin_time(0.1*ns) {}
+VetoAna::VetoAna(): trackerCollID(0), event(0), file_decay("simulated_decay.txt"), file_exp("simulated_exp.txt") {}
 VetoAna::~VetoAna() {}
 
 void VetoAna::BeginOfRunAction(const G4Run *aRun)
@@ -45,14 +42,11 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
 {
     std::unordered_set<G4int> ids;
     std::vector<B2TrackerHit> detected[3];
-    double time = 0, time_up = 0;
-    bool found_up = false, found_down = false, found = false;
-    double max_delay = 100*ns;
-    double toffset = 0*evt->GetEventID(); // TODO change 0 with muon emmition interval
+    double time = 0, time_exp = 0, time_up = 0;
+    bool found_up = false, found_down = false, found_down_exp = false, found = false, found_exp = false;
     G4double Etot = 0;
 
     event=evt->GetEventID();
-    test->SetEvent(event);
     G4SDManager * SDman = G4SDManager::GetSDMpointer();
 
     std::string colls[3] = {"TrackerHitsCollection1","TrackerHitsCollection2","TrackerHitsCollection3"};
@@ -72,11 +66,6 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
                     for (G4int i=0;i<n_hit;i++) {
                         B2TrackerHit *part = (*THC)[i];
 
-                        //store deposit energy
-                        unsigned int it = (part->GetGlobalTime()+toffset)/bin_time;
-                        if(energy[ic].size() <= it) energy[ic].resize(2*it,0); 
-                        energy[ic][it] += part->GetEdep();
-
                         //get particle name and total energy
                         G4double Edep = part->GetEdep();
                         Etot += Edep;
@@ -94,6 +83,15 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
                             if (part->GetCreationProcess() == "Decay" && !found) {
                                 found = true;
                                 time = part->GetGlobalTime() - time;    
+                            }
+
+                            if(found_down_exp && !found_exp) {
+                                found_exp = true;
+                                time_exp = part->GetGlobalTime() - time_exp;
+                            }
+                            if(!found_down_exp) {
+                                found_down_exp = true;
+                                time_exp = part->GetGlobalTime();
                             }
                         }
                         
@@ -129,11 +127,11 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
         G4cout << G4endl;
 
         file_decay << time/1000 << std::endl;
-
-        //if(Etot > 0) test->SettotEPb(Etot);
-        test->SetTime(time);
-        test->FillTree();
     }     
+    if (found_exp) {
+        file_exp << time_exp/1000 << std::endl;
+    }
+
 }
 void VetoAna::UserSteppingAction(const G4Step* aStep)
 {

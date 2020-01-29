@@ -35,9 +35,7 @@ class VetoAna : public G4UserSteppingAction, public G4UserEventAction, public G4
 
         G4int event;
         std::unordered_map<G4int, G4String> names;
-        std::ofstream file_decay, file_elec;
-        std::vector<double> energy[3];
-        double bin_time;
+        std::ofstream file_decay, file_exp;
 };
 
 #endif

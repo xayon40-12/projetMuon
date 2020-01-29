@@ -51,8 +51,6 @@
 #include "ExN01PrimaryGeneratorAction.hh"
 #include "VetoAna.hh"
 
-#include "RootFile_evt.hh"
-RootFile_evt *test;
 using namespace CLHEP;
 
 int main(int argc,char** argv)
@@ -60,8 +58,6 @@ int main(int argc,char** argv)
   G4int seed = time(0);
   HepRandom::setTheSeed(seed);
   
-  test = new RootFile_evt();
-  test->Create();
 
   G4UIExecutive* ui = 0;
   if ( argc == 1 ) {
@@ -123,9 +119,6 @@ int main(int argc,char** argv)
   runManager->SetUserAction((G4UserSteppingAction*)0);
   delete runManager;
   
-  test->EndOfAction();
-  delete test;
-
   return 0;
 }
 
