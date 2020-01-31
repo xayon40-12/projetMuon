@@ -20,6 +20,7 @@
 
 
 #include <unordered_set>
+#include <algorithm>
 
 #include "electronics.hh"
 
@@ -42,7 +43,6 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
     double time = 0, time_exp = 0;
     bool found_up = false, found_down = false, found_down_exp = false, found = false, found_exp = false;
     G4double Etot = 0;
-    double dead_time = 150*ns;
 
     event=evt->GetEventID();
     G4SDManager * SDman = G4SDManager::GetSDMpointer();
@@ -120,20 +120,24 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
         file_decay << time/1000 << std::endl;
     }
 
-    for(int i=0;i<3;i++)
-        if(detected[i].size()>0) std::sort(detected[i].begin(), detected[i].end(), [](B2TrackerHit p1, B2TrackerHit p2){return p1.GetAppearTime()-p2.GetAppearTime();});
+    std::vector<std::pair<double,bool>> detected_times[3];
+    for(int i=0;i<3;i++){
+        for(auto &p: detected[i]) detected_times[i].push_back({p.GetAppearTime(),p.GetCreationProcess() == "Decay"});
+        std::sort(detected_times[i].begin(), detected_times[i].end());
+    }
 
     double gateL = 80*ns, gateNoL = 133*ns, delay = (gateNoL-gateL)/2;
-    for(auto up: detected[0]) {
-        double time_up = up.GetAppearTime();
-        for(auto down: detected[2]) {
-            double time_down = down.GetAppearTime();
-            if(found_down_exp){
-                for(auto up: detected[0]) {
-                    double time_up = up.GetAppearTime();
-                    if(time_down+delay+gateL<time_up || time_down+delay>time_up+gateNoL){ //TODO use real gates
+    double dead_time = 150*ns; //TODO ask again why dead time
+    for(auto up: detected_times[0]) {
+        double time_up = up.first;
+        for(auto down: detected_times[2]) {
+            double time_down = down.first;
+            if(found_down_exp && time_down-time_exp>dead_time){
+                for(auto up: detected_times[0]) {
+                    double time_up = up.first;
+                    if(time_down+delay+gateL<time_up || time_down+delay>time_up+gateNoL){
                         time_exp = time_down-time_exp;
-                        if(down.GetCreationProcess() == "Decay") count_exp_decay++;
+                        if(down.second) count_exp_decay++;
                         count_exp++;
                         found_exp = true;
                         break;
@@ -141,7 +145,7 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
                 }
             }
             if(found_exp) break;
-            if(abs(time_down-time_up)<gateL){
+            if(!found_down_exp && abs(time_down-time_up)<gateL){
                 found_down_exp = true;
                 time_exp = time_down;
             }

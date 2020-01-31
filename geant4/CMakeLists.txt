@@ -42,5 +42,6 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
+set(CMAKE_CXX_FLAGS "-O3")
 add_executable(projetMuon main.cc ${sources} ${headers})
 target_link_libraries(projetMuon ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} )

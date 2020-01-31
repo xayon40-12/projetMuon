@@ -67,7 +67,7 @@ ExN01PrimaryGeneratorAction::~ExN01PrimaryGeneratorAction() {}
 
 void ExN01PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
-    muGun.generate(anEvent, 3.*m, 1.*m, GeV);
+    muGun.generate(anEvent, 2.*m, 0.5*m, GeV);
 }
 
 

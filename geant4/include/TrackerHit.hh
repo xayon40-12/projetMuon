@@ -62,6 +62,7 @@ class B2TrackerHit : public G4VHit
 
   private:
 
+      G4double      appearTime;
       G4int         fTrackID;
       G4int         fParentID;
       G4String      fParentName;
@@ -72,9 +73,10 @@ class B2TrackerHit : public G4VHit
       G4ThreeVector fPos;
       G4String      partName;
       G4double      globTime;
-      G4double      appearTime;
       G4double      disappearTime;
 };
+
+bool operator<(const B2TrackerHit & lhs, const B2TrackerHit & rhs);
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 

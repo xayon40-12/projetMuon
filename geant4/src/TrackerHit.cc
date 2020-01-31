@@ -21,7 +21,8 @@ B2TrackerHit::B2TrackerHit()
    fChamberNb(-1),
    fEdep(0.),
    fPos(G4ThreeVector()),
-   partName("None")
+   partName("None"),
+    appearTime(0)
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -106,3 +107,8 @@ void B2TrackerHit::Print()
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+bool operator<(const B2TrackerHit & lhs, const B2TrackerHit & rhs)
+{
+    return lhs.GetAppearTime() < rhs.GetAppearTime();
+}
