@@ -23,7 +23,7 @@
 
 #include "electronics.hh"
 
-VetoAna::VetoAna(): trackerCollID(0), event(0), file_decay("simulated_decay.txt"), file_exp("simulated_exp.txt"), file_count("simulated_count.txt") {}
+VetoAna::VetoAna(): trackerCollID(0), event(0), file_decay("simulated_decay.txt"), file_exp("simulated_exp.txt"), file_count("simulated_count.txt"), file_processes("simulated_processes.txt") {}
 VetoAna::~VetoAna() {}
 
 void VetoAna::BeginOfRunAction(const G4Run *aRun)
