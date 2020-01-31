@@ -140,6 +140,7 @@ void VetoAna::EndOfRunAction(const G4Run *aRun)
 {
     G4cout << "### End Run " << aRun->GetRunID() << "." << G4endl;
     file_count << "decay: " << count_decay << "\nexp: " << count_exp << "\nexp_decay: " << count_exp_decay << std::endl;
+    for(auto p: processes) file_processes << p << std::endl;
 }
 
 void VetoAna::UserSteppingAction(const G4Step* aStep)
