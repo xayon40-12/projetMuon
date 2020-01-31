@@ -23,16 +23,13 @@
 
 #include "electronics.hh"
 
-VetoAna::VetoAna(): trackerCollID(0), event(0), file_decay("simulated_decay.txt"), file_exp("simulated_exp.txt") {}
+VetoAna::VetoAna(): trackerCollID(0), event(0), file_decay("simulated_decay.txt"), file_exp("simulated_exp.txt"), file_count("simulated_count.txt") {}
 VetoAna::~VetoAna() {}
 
 void VetoAna::BeginOfRunAction(const G4Run *aRun)
 {
     G4cout << "### Begin Run " << aRun->GetRunID() << "." << G4endl;
-}
-void VetoAna::EndOfRunAction(const G4Run *aRun)
-{
-    G4cout << "### End Run " << aRun->GetRunID() << "." << G4endl;
+    count_decay = count_exp = count_exp_decay = 0;
 }
 
 
@@ -66,6 +63,8 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
                     for (G4int i=0;i<n_hit;i++) {
                         B2TrackerHit *part = (*THC)[i];
 
+                        processes.insert(part->GetCreationProcess());
+
                         //get particle name and total energy
                         G4double Edep = part->GetEdep();
                         Etot += Edep;
@@ -83,6 +82,7 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
                             if (part->GetCreationProcess() == "Decay" && !found) {
                                 found = true;
                                 time = part->GetGlobalTime() - time;    
+                                count_decay++;
                             }
 
                             if(found_down_exp && !found_exp) {
@@ -92,6 +92,8 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
                             if(!found_down_exp) {
                                 found_down_exp = true;
                                 time_exp = part->GetGlobalTime();
+                                count_exp++;
+                                if(part->GetCreationProcess() == "Decay") count_exp_decay++;
                             }
                         }
                         
@@ -133,6 +135,13 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
     }
 
 }
+
+void VetoAna::EndOfRunAction(const G4Run *aRun)
+{
+    G4cout << "### End Run " << aRun->GetRunID() << "." << G4endl;
+    file_count << "decay: " << count_decay << "\nexp: " << count_exp << "\nexp_decay: " << count_exp_decay << std::endl;
+}
+
 void VetoAna::UserSteppingAction(const G4Step* aStep)
 {
     //auto Edep = aStep->GetTotalEnergyDeposit();
