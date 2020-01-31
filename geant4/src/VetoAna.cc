@@ -23,7 +23,7 @@
 
 #include "electronics.hh"
 
-VetoAna::VetoAna(): trackerCollID(0), event(0), file_decay("simulated_decay.txt"), file_exp("simulated_exp.txt"), file_count("simulated_count.txt"), file_processes("simulated_processes.txt") {}
+VetoAna::VetoAna(): trackerCollID(0), event(0), file_decay("simulated_decay.txt"), file_exp("simulated_exp.txt"), file_count("simulated_count.txt"), file_processes("simulated_processes.txt"), file_energies("simulated_energies.txt"), first_event(true) {}
 VetoAna::~VetoAna() {}
 
 void VetoAna::BeginOfRunAction(const G4Run *aRun)
@@ -39,9 +39,10 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
 {
     std::unordered_set<G4int> ids;
     std::vector<B2TrackerHit> detected[3];
-    double time = 0, time_exp = 0, time_up = 0;
+    double time = 0, time_exp = 0;
     bool found_up = false, found_down = false, found_down_exp = false, found = false, found_exp = false;
     G4double Etot = 0;
+    double dead_time = 150*ns;
 
     event=evt->GetEventID();
     G4SDManager * SDman = G4SDManager::GetSDMpointer();
@@ -63,8 +64,6 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
                     for (G4int i=0;i<n_hit;i++) {
                         B2TrackerHit *part = (*THC)[i];
 
-                        processes.insert(part->GetCreationProcess());
-
                         //get particle name and total energy
                         G4double Edep = part->GetEdep();
                         Etot += Edep;
@@ -72,7 +71,6 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
 
                         if (ic == 0 && part->GetPartName() == "mu-" && !found_up) {
                             found_up = true; 
-                            time_up = part->GetGlobalTime();
                         }
                         if (ic == 2 && found_up) {
                             if (part->GetPartName() == "mu-" && !found_down) {
@@ -81,22 +79,10 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
                             }
                             if (part->GetCreationProcess() == "Decay" && !found) {
                                 found = true;
-                                time = part->GetGlobalTime() - time;    
+                                time = part->GetGlobalTime() - time;
                                 count_decay++;
                             }
-
-                            if(found_down_exp && !found_exp) {
-                                found_exp = true;
-                                time_exp = part->GetGlobalTime() - time_exp;
-                            }
-                            if(!found_down_exp) {
-                                found_down_exp = true;
-                                time_exp = part->GetGlobalTime();
-                                count_exp++;
-                                if(part->GetCreationProcess() == "Decay") count_exp_decay++;
-                            }
                         }
-                        
                         if (part->GetEdep() != 0 && i != 0) lastPart.SetDisappearTime(part->GetGlobalTime());
 
                         if(ids.find(ID) == ids.end()) {
@@ -118,18 +104,51 @@ void VetoAna::EndOfEventAction(const G4Event* evt)
                     lastPart.SetEdep(totalDeposit);
                     lastPart.SetParentName(names[lastPart.GetParentID()]);
                     detected[ic].push_back(lastPart);
+
+                    if(ic == 2 && n_hit>0) first_event = false;
                 }
             }
         }
     }
+    for(auto p: detected[2]) file_processes << p.GetCreationProcess() << std::endl;
 
-    if (found) {  
-        G4cout <<  "Event number " << evt->GetEventID() << ", " << ids.size() << " particle passed through the detector:\n";
-        for (auto part: detected[2]) part.Print();
-        G4cout << G4endl;
+    if (found) {
+        //G4cout <<  "Event number " << evt->GetEventID() << ", " << ids.size() << " particle passed through the detector:\n";
+        //for (auto part: detected[2]) part.Print();
+        //G4cout << G4endl;
 
         file_decay << time/1000 << std::endl;
-    }     
+    }
+
+    for(int i=0;i<3;i++)
+        if(detected[i].size()>0) std::sort(detected[i].begin(), detected[i].end(), [](B2TrackerHit p1, B2TrackerHit p2){return p1.GetAppearTime()-p2.GetAppearTime();});
+
+    double gateL = 80*ns, gateNoL = 133*ns, delay = (gateNoL-gateL)/2;
+    for(auto up: detected[0]) {
+        double time_up = up.GetAppearTime();
+        for(auto down: detected[2]) {
+            double time_down = down.GetAppearTime();
+            if(found_down_exp){
+                for(auto up: detected[0]) {
+                    double time_up = up.GetAppearTime();
+                    if(time_down+delay+gateL<time_up || time_down+delay>time_up+gateNoL){ //TODO use real gates
+                        time_exp = time_down-time_exp;
+                        if(down.GetCreationProcess() == "Decay") count_exp_decay++;
+                        count_exp++;
+                        found_exp = true;
+                        break;
+                    }
+                }
+            }
+            if(found_exp) break;
+            if(abs(time_down-time_up)<gateL){
+                found_down_exp = true;
+                time_exp = time_down;
+            }
+        }
+        if(found_exp) break;
+    }
+
     if (found_exp) {
         file_exp << time_exp/1000 << std::endl;
     }
@@ -140,7 +159,7 @@ void VetoAna::EndOfRunAction(const G4Run *aRun)
 {
     G4cout << "### End Run " << aRun->GetRunID() << "." << G4endl;
     file_count << "decay: " << count_decay << "\nexp: " << count_exp << "\nexp_decay: " << count_exp_decay << std::endl;
-    for(auto p: processes) file_processes << p << std::endl;
+    //for(auto p: processes) file_processes << p << std::endl;
 }
 
 void VetoAna::UserSteppingAction(const G4Step* aStep)
