@@ -36,7 +36,7 @@ class VetoAna : public G4UserSteppingAction, public G4UserEventAction, public G4
 
         G4int event;
         std::unordered_map<G4int, G4String> names;
-        std::ofstream file_decay, file_exp, file_count, file_processes, file_energies;
+        std::ofstream file_decay, file_exp, file_exp_decay, file_count, file_processes, file_energies;
         std::unordered_set<std::string> processes;
         long count_decay, count_exp, count_exp_decay;
         bool first_event;
