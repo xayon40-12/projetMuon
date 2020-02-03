@@ -2,3 +2,4 @@ geant4/build/**
 !Mu.root
 !vis.mac
 !run.mac
+!PlotHisto.C
