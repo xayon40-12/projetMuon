@@ -36,5 +36,5 @@
 /vis/scene/endOfEventAction accumulate
 #
 /tracking/verbose 0
-/run/beamOn 1
+/run/beamOn 1000
 /vis/viewer/rebuild

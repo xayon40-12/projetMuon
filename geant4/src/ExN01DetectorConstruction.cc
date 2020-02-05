@@ -41,11 +41,29 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
   G4Element* O = new G4Element("Oxygen"  , "O", z=8., a= 16.00*g/mole);
   G4Element* Na = new G4Element("Sodium"  , "Na", z=11., a= 22.99*g/mole);
   G4Element* Mg = new G4Element("Magnesium"  , "Mg", z=12., a= 24.31*g/mole);
-  //G4Element* Al = new G4Element("Aluminium"  , "Al", z=13., a= 26.98*g/mole);
+  G4Element* Al = new G4Element("Aluminium"  , "Al", z=13., a= 26.98*g/mole);
   G4Element* K = new G4Element("Potasium"  , "K", z=19., a= 39.10*g/mole);
   G4Element* Ca = new G4Element("Calcium"  , "Ca", z=20., a= 40.08*g/mole);
   G4Element* Mn = new G4Element("Manganese"  , "Mn", z=25., a= 54.94*g/mole);
   G4Element* Fe = new G4Element("Iron"  , "Fe", z=26., a= 55.85*g/mole);
+  G4Element* Si = new G4Element("Silicium"  , "Si", z=14., a= 28.09*g/mole);
+  G4Element* S = new G4Element("Soufre"  , "S", z=16., a= 32.06*g/mole);
+  G4Element* Cl = new G4Element("Chlore"  , "Cl", z=17., a= 35.45*g/mole);
+
+
+  //Beton
+  G4Material* Beton = new G4Material("Beton", density= 2.335*mg/cm3, nel=11);
+  Beton->AddElement(Ca, 3.75*perCent);
+  Beton->AddElement(O, 44.86*perCent);
+  Beton->AddElement(Si, 26.91*perCent);
+  Beton->AddElement(Fe, 8.56*perCent);
+  Beton->AddElement(Mg, 1.06*perCent);
+  Beton->AddElement(Na, 1.23*perCent);
+  Beton->AddElement(K, 3.46*perCent);
+  Beton->AddElement(S, 0.12*perCent);
+  Beton->AddElement(Al, 5.29*perCent);
+  Beton->AddElement(Cl, 0.01*perCent);
+  Beton->AddElement(H, 4.75*perCent);
 
   //Air
   G4Material* Air = new G4Material("Air", density= 0.00001*mg/cm3, nel=2);
@@ -70,7 +88,7 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
   Wood->AddElement(Fe, 0.1*perCent);
 
   //Aluminium
-  G4Material* Al = new G4Material("Aluminium", z=13., a= 26.98*g/mole,density= 2.6989*g/cm3);
+  G4Material* Alu = new G4Material("Aluminium", z=13., a= 26.98*g/mole,density= 2.6989*g/cm3);
 
   G4NistManager* man = G4NistManager::Instance();
   G4Material* csiMaterial = man->FindOrBuildMaterial("G4_CESIUM_IODIDE");
@@ -80,9 +98,9 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
   //------------------------------ experimental hall (world volume)
   //------------------------------ beam line along x axis
 
-  G4double expHall_x = 1*m;
-  G4double expHall_y = 1*m;
-  G4double expHall_z = 1*m;
+  G4double expHall_x = 25*m;
+  G4double expHall_y = 25*m;
+  G4double expHall_z = 25*m;
   G4Box* experimentalHall_box
     = new G4Box("expHall_box",expHall_x,expHall_y,expHall_z);
   experimentalHall_log = new G4LogicalVolume(experimentalHall_box,
@@ -169,7 +187,7 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
   G4double alexterieur_z = 7.9*cm;
   
   G4Box* alexterieur = new G4Box("alexterieur",alexterieur_x,alexterieur_y,alexterieur_z);
-  alexterieur_log = new G4LogicalVolume(alexterieur,Al,"alexterieur_log",0,0,0);
+  alexterieur_log = new G4LogicalVolume(alexterieur,Alu,"alexterieur_log",0,0,0);
 
   // Position aluminium exterieur
   G4double alexterieur_pos_x = 0.65*cm;
@@ -284,6 +302,28 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
   G4String Scintillator3SDname = "SD3";
   B2TrackerSD* Scintillator3SD = new B2TrackerSD(Scintillator3SDname ,
                                             "TrackerHitsCollection3");
+
+  scintillatorC_log = new G4LogicalVolume(scintillatorC,
+                                   Scintillator,"scintillatorC_log",0,0,0);
+  
+  //-----------------
+  G4double beton_x = 1*m;
+  G4double beton_y = 1*m;
+  G4double beton_z = 0.4*m;
+
+  G4double betonpos_x = 0*cm;
+  G4double betonpos_y = 0*cm;
+  G4double betonpos_z = 2.5*m;
+  
+  G4Box* beton = new G4Box("beton",beton_x,beton_y,beton_z);
+  
+  beton_log = new G4LogicalVolume(beton,Beton,"beton_log",0,0,0);
+
+  beton_phys = new G4PVPlacement(0,G4ThreeVector(betonpos_x,betonpos_y,betonpos_z),beton_log,"beton",0,false,0);
+ 
+
+ 
+  
   G4SDManager::GetSDMpointer()->AddNewDetector(Scintillator3SD);
   SetSensitiveDetector("scintillatorC_log", Scintillator3SD, true);
   

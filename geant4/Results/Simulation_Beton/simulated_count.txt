@@ -1,0 +1,3 @@
+decay: 10569
+exp: 9809
+exp_decay: 9690
