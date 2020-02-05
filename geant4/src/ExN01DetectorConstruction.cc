@@ -307,8 +307,8 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
                                    Scintillator,"scintillatorC_log",0,0,0);
   
   //-----------------
-  G4double beton_x = 1*m;
-  G4double beton_y = 1*m;
+  G4double beton_x = 8*m;
+  G4double beton_y = 8*m;
   G4double beton_z = 0.4*m;
 
   G4double betonpos_x = 0*cm;
@@ -319,11 +319,8 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
   
   beton_log = new G4LogicalVolume(beton,Beton,"beton_log",0,0,0);
 
-  beton_phys = new G4PVPlacement(0,G4ThreeVector(betonpos_x,betonpos_y,betonpos_z),beton_log,"beton",0,false,0);
+  beton_phys = new G4PVPlacement(0,G4ThreeVector(betonpos_x,betonpos_y,betonpos_z),beton_log,"beton",experimentalHall_log,false,0);
  
-
- 
-  
   G4SDManager::GetSDMpointer()->AddNewDetector(Scintillator3SD);
   SetSensitiveDetector("scintillatorC_log", Scintillator3SD, true);
   
@@ -344,6 +341,7 @@ G4VPhysicalVolume* ExN01DetectorConstruction::Construct()
   alexterieur_log ->SetVisAttributes(targetVisAtt);
   woodinterieur2_log ->SetVisAttributes(targetVisAtt);
   woodexterieur2_log ->SetVisAttributes(targetVisAtt);
+  beton_log->SetVisAttributes(targetVisAtt);
   
   return experimentalHall_phys;
 }
