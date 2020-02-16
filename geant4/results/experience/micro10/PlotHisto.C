@@ -83,9 +83,9 @@ void PlotHisto(char* filename){
     }
   fclose(fp1);
 
-  for (int binning=90;binning<120;binning++){
+  for (int binning=100;binning<150;binning++){
 
-    h2 = new TH1F("h2","Simulation avec beton",binning,min,max) ;
+    h2 = new TH1F("h2","Fit of the data",binning,min,max) ;
     h2->Sumw2();
     fp1 = fopen(filename,"r");
     while(fscanf(fp1,"%lf",&time)!=EOF)
@@ -104,7 +104,8 @@ void PlotHisto(char* filename){
     fit->SetParameter(2,20);
 
     TFitResultPtr MyFit = h2->Fit(fit,"LS","E",min+(max-min)/binning,max-(max-min)/binning);
-  
+    h2->GetYaxis()->SetTitle("Number of events");
+    h2->GetXaxis()->SetTitle("Time (#mus)");
     Int_t fit_status_value = MyFit->Status();
     Int_t fit_covmat_value = MyFit->CovMatrixStatus();
     Double_t chi2_Background = fit->GetChisquare();
